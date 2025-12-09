@@ -28,3 +28,4 @@ replay_pid*
 /bin/
 *.env
 *.txt
+bin/GUI/Panel/*.class
