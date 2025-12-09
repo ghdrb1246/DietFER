@@ -23,7 +23,6 @@ public class MainFrame extends JFrame {
         // 탭 구성
         initTabs();
         
-
         // 프레임 제목 설정
         setTitle("다이어트 메니저");
         // 닫기 버튼 클릭 시 프로그램 종료로 설정

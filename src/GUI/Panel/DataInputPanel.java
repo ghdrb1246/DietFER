@@ -5,7 +5,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class DataInputPanel extends JPanel {
-
     private DefaultTableModel tableModel;
     private JTable table;
 

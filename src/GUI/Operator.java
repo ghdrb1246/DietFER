@@ -4,7 +4,7 @@ import javax.swing.*;
 
 import GUI.Dialog.*;
 
-public class EntryDialogTest {
+public class Operator {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             EntryDialog dialog = new EntryDialog(null);

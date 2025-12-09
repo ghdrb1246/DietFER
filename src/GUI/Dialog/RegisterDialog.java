@@ -2,9 +2,9 @@ package GUI.Dialog;
 
 import javax.swing.*;
 import java.awt.*;
+// TODO : 사용자 정보 DB에 산입, 회원가입 버튼 클릭 시 EntryDialog으로 이동
 
 public class RegisterDialog extends JDialog {
-
     public RegisterDialog(Dialog owner) {
         super(owner, "회원가입", true);
 
