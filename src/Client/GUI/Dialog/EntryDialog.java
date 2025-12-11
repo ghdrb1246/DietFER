@@ -1,8 +1,7 @@
-package GUI.Dialog;
+package Client.GUI.Dialog;
 
 import javax.swing.*;
-
-import GUI.Frame.MainFrame;
+import Client.GUI.Frame.MainFrame;
 
 import java.awt.*;
 

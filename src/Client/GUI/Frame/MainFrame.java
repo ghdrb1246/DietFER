@@ -1,18 +1,17 @@
-package GUI.Frame;
+package Client.GUI.Frame;
 
 import javax.swing.*;
 
-import GUI.Dialog.EntryDialog;
-import GUI.Panel.AnalysisPanel;
-import GUI.Panel.DataInputPanel;
-
+import Client.GUI.Dialog.EntryDialog;
+import Client.GUI.Panel.AnalysisPanel;
+import Client.GUI.Panel.DataInputPanel;
 import java.awt.*;
 
 public class MainFrame extends JFrame {
     private String userId;
     private AnalysisPanel analysisPanel; // 다이어트 분석 패널
     private DataInputPanel dataInputPanel; // 데이터 입력 패널
-    
+
     public MainFrame(String userId) {
         super("다이어트 분석 시스템 - 메인");
         this.userId = userId;

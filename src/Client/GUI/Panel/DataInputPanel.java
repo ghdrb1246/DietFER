@@ -1,7 +1,12 @@
-package GUI.Panel;
+package Client.GUI.Panel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import Client.GUI.Dialog.DietDialog;
+import Client.GUI.Dialog.ExerciseDialog;
+import Client.GUI.Dialog.WeightDialog;
+
 import java.awt.*;
 
 public class DataInputPanel extends JPanel {
@@ -33,15 +38,19 @@ public class DataInputPanel extends JPanel {
 
         // 버튼 클릭 이벤트 (다음 단계에서 Dialog 연결)
         btnDiet.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "식단 입력 JDialog 다음 단계에서 구현");
+            new DietDialog(SwingUtilities.getWindowAncestor(this), this).setVisible(true);
         });
 
         btnExercise.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "운동 입력 JDialog 다음 단계에서 구현");
+            new ExerciseDialog(SwingUtilities.getWindowAncestor(this), this).setVisible(true);
         });
 
         btnWeight.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "체중 입력 JDialog 다음 단계에서 구현");
+            new WeightDialog(SwingUtilities.getWindowAncestor(this), this).setVisible(true);
         });
+    }
+
+    public void addRow(Object[] rowData) {
+        tableModel.addRow(rowData);
     }
 }

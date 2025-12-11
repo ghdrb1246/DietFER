@@ -1,4 +1,4 @@
-package GUI.Dialog;
+package Client.GUI.Dialog;
 
 import javax.swing.*;
 import java.awt.*;

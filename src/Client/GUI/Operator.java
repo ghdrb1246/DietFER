@@ -1,8 +1,8 @@
-package GUI;
+package Client.GUI;
 
 import javax.swing.*;
 
-import GUI.Dialog.*;
+import Client.GUI.Dialog.*;
 
 public class Operator {
     public static void main(String[] args) {
