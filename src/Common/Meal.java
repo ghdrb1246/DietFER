@@ -39,9 +39,10 @@ public class Meal {
      * @param protein       단백질
      * @param province      지방
      */
-    public Meal(String id, LocalDateTime dateTime, String foodName, double gram, double kcal, double carbohydrate, double protein, double province) {
+    public Meal(String id, LocalDateTime dateTime, String foodName, String foodTypr, double gram, double kcal, double carbohydrate, double protein, double province) {
         this.id = id;
         this.dateTime = dateTime;
+        this.foodTypr = foodTypr;
         this.foodName = foodName;
         this.gram = gram;
         this.kcal = kcal;

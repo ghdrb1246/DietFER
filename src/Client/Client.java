@@ -10,7 +10,6 @@ import java.io.*;
 import java.net.*;
 
 import Client.GUI.Dialog.EntryDialog;
-// import Common.MessageParser;
 
 /**
  * 클라이언트 클래스
@@ -19,13 +18,14 @@ public class Client {
     // 소켓 선언
     private Socket socket = null;
     // 서버 송신 클래스 선언
-    // private ClientSender sender = null;
+    private ClientSender sender = null;
     // 메시지 처리 선언
-    // private MessageListener msgListener = null;
-    
+    private MessageListener msgListener = null;
+
     // GUI 선언
     private EntryDialog dialog = null;
-    
+    // private RegisterDialog ed = null;
+    private MessageRouter mr = new MessageRouter();
     
     // 클라이언트 메인 메소드
     public static void main(String[] agse) {
@@ -42,22 +42,24 @@ public class Client {
             socket = new Socket("localhost", 55550);
             System.out.println("Client > 서버로 연결되었습니다.");
             
-            
             // 메시지 송신기 생성
-            // sender = new ClientSender(socket);
+            sender = new ClientSender(socket);
             
             // GUI 연결
-            dialog = new EntryDialog(null);
-           
+            dialog = new EntryDialog(null, sender, mr);
+            // ed = new RegisterDialog(null, sender);
 
-            // mu = new MenuUI(sender);
-            // msgListener = new MessageListener(socket);
-            
+            msgListener = new MessageListener(socket, mr);
+
+            mr.setEntryDialog(dialog);
+            // mr.setRegisterDialog(ed);
+
             // 메시지 처리 스레드 시작
-            // msgListener.start();
-    
+            msgListener.start();
+            
             // 메뉴 표시 시작
             dialog.setVisible(true);
+            // ui.setVisible(true);
             // mu.start();
 
             // 클라이언트 스레드를 0.1s 대시

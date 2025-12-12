@@ -90,7 +90,11 @@ public enum MessageType {
 
     // 피드백
     FEEDBACK_REQ (22, "FEEDBACK_REQ"),
-    FEEDBACK_RES (23, "FEEDBACK_RES");
+    FEEDBACK_RES (23, "FEEDBACK_RES"),
+
+    // 메시지
+    MSG_REQ (24, "MSG_ERQ"),
+    MSG_RES (24, "MSG_ERQ");
 
     // 메시지 인덱스
     private int i = 0;

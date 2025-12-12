@@ -3,7 +3,7 @@ package Client;
 import java.net.*;
 import java.util.ArrayList;
 
-import Common.MessageParser;
+import Common.*;
 
 import java.io.*;
 
@@ -57,7 +57,7 @@ class MessageListener extends Thread {
                     String msg = dataInputStream.readUTF();
                     if (msg == null || msg.trim().equals("")) continue;
                     // 매시지 처리
-                    // msgBasedService(msg);
+                    msgBasedService(msg);
                 }
             
             } 
@@ -80,115 +80,74 @@ class MessageListener extends Thread {
     }
 
     // 메시지 타입에 따라 처리
-   /*  public void msgBasedService(String _msg) {
+    public void msgBasedService(String _msg) {
         MessageType tm = mp.getType(_msg);
 
         // 메시지 타입 판단
         switch (tm) {
-            case ID_RES : 
-                // id 메시지 처리
-                processIDRes(_msg); 
-                break;
-            case WELCOME : 
-                // 웰컴 메시지 처리
-                processWelcomeRes(_msg); 
-                break;
-            case LOGIN_RES :
-                // 로그인 메시지 처리 
-                processLoginRes(_msg);
-                break;
-            case JOIN_RES :
-                // 회원 가입 메시지 처리
-                processJoinRes(_msg);
-                break;
-            case MSG_RES :
-                // 메시지 검사 메시지 처리
-                processMsgRes(_msg);
-                break;
-            case BROADCAST :
-                // 전체 메시지 처리
-                processBroadcastRes(_msg);
-                break;
-            case WHISPER :
-                // 귓속말 메시지 처리
-                processWhisperRes(_msg);
-                break;
-            case USERLIST :
-                // 사용자 리스트 메시지 처리
-                processUserListRes(_msg);
-                break;
             case EXIT_RES :
                 // 종료 메시지 처리
-                processExitRes(_msg);
+                
                 break;
+
+            case SIGNUP_RES:
+                // 회원 가입 메시지 처리
+                System.out.println("SIGNUP");
+                processSignupRes(_msg);
+                break;
+
+            case LOGIN_RES :
+                // 로그인 메시지 처리 
+                System.out.println("LOGIN");
+                processLoginRes(_msg);
+                break;
+
+            case USER_UPDATE_RES :
+                // 회원 정보 수정 메시지 처리
+                
+                break;
+            case LOGOUT_RES :
+                // 로그아웃 메시지 처리
+                
+                break;
+            case USER_DELETE_RES :
+                // 회원 탈퇴 메시지 처리
+                
+                break;
+            case MEAL_ADD_RES :
+                // 식단 추가 메시지 처리
+                processMealRes(_msg);
+                break;
+            case WORKOUT_ADD_RES :
+                // 운동 추가 메시지 처리
+                processWorkoutRes(_msg);
+                break;
+
+            case WEIGHT_ADD_RES :
+                // 체중 추가 메시지 처리
+                processWeightRes(_msg);
+                break;
+
+            case RECORD_RES :
+                // 기록 조회 메시지 처리
+                processRecordRes(_msg);
+                break;
+            
+            case PROGRESS_RES :
+                // 달성률 메시지 처리
+                processProgressRes(_msg);
+                break;
+            
+            case FEEDBACK_RES :
+                // 피드백 처리
+                processFeedbackRes(_msg);
+                break;
+
             default :
                 // 메뉴 콜백 인테페이스 호출
                 mc.onMessageError(tm + "는 처리할 수 없는 메시지 타입입니다.", null);
                 break;
         }
-    } */
-    /**
-     *사용자 id 처리하는 메소드
-     * @param _msg 메시지
-     */
-    private void processIDRes(String _msg) {
-        // id 추출
-        String id = mp.findID(_msg);
-        // 처리 결과 추출
-        String ck = mp.getToken(_msg, 2);
-        // 메뉴 콜백 인테페이스 호출
-        // mc.onIdRes(id, ck);
-    }
-
-
-    /**
-     * 로그인 요청 결과를 메뉴으로 리턴 메소드
-     * 
-     * @param _msg 메시지
-     */
-    private void processLoginRes(String _msg) {
-        // id 추출
-        String id = mp.findID(_msg);
-        // 처리 결과 추출
-        String res = mp.getToken(_msg, 2);
-        // 메뉴 콜백 인테페이스 호출
-        mc.onLoginRes(id, res);
-    }
-
-    /**
-     * 회원가입 요청 결과를 메뉴으로 리턴 메소드
-     * 
-     * @param _msg 메시지
-     */
-    private void processJoinRes(String _msg) {
-        // 처리 결과 추출
-        String res = mp.getToken(_msg, 2);
-        // 메뉴 콜백 인테페이스 호출
-        // mc.onJoinRes(res);
-    }
-    
-    /**
-     * 메시지 전송 결과를 메뉴으로 리턴 메소드
-     * 
-     * @param _msg 메시지
-     */
-    private void processMsgRes(String _msg) {
-        // 처리 결과 추출
-        String res = mp.getToken(_msg, 2);
-        // 메뉴 콜백 인테페이스 호출
-        // mc.onNormalMessageRes(res);
-    }
-
-    /**
-     * 사용자 ID 리스트 요청 결과를 메뉴으로 리턴
-     * 
-     * @param _msg 메시지
-     */
-    private void processUserListRes(String _msg) {
-        // 시용자 리스트 추출
-        // ArrayList<String> ulsit = mp.userList(_msg);
-        // 메뉴 콜백 인테페이스 호출
-        // mc.onUserListRes(ulsit);
     }
 
     /**
@@ -196,10 +155,156 @@ class MessageListener extends Thread {
      * 
      * @param _msg
      */
-    private void processExitRes(String _msg) {
+/*     private void processExitRes(String _msg) {
         String res = mp.getToken(_msg, 2);
         // 메뉴 콜백 인테페이스 호출
-        if (mp.isOk(res)) mc.onTerminateProgramOk();
-        else mc.onTerminateProgramFail();
+        if (mp.isOk(res))
+            mc.onTerminateProgramOk();
+        else
+            mc.onTerminateProgramFail();
+    } */
+
+    /**
+     * 로그인 요청 결과를 메뉴으로 리턴 메소드
+     * 
+     * @param _msg 메시지
+     */
+    private void processLoginRes(String _msg) {
+        System.out.println("Login 처리");
+        // id 추출
+        String id = mp.findID(_msg);
+        // 처리 결과 추출
+        String res = mp.getToken(_msg, 2);
+        System.out.println(res);
+
+        // 메뉴 콜백 인테페이스 호출
+        mc.onLoginRes(id, res);
+        
+    }
+
+    /**
+     * 회원가입 요청 결과를 메뉴으로 리턴 메소드
+     * 
+     * @param _msg 메시지
+     */
+    private void processSignupRes(String msg) {
+        // id 추출
+        String id = mp.findID(msg);
+        // 처리 결과 추출
+        String res = mp.getToken(msg, 2);
+        // 메뉴 콜백 인테페이스 호출
+        mc.onSignupRes(id, res);
+    }
+
+    /**
+     * 식단 입력 요청 결과를 메뉴으로 리턴 메소드
+     * 
+     * @param msg 메시지 
+     * MEAL_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”)
+     */
+    public void processMealRes(String msg) {
+        // id 추출
+        String id = mp.findID(msg);
+        // 처리 결과 추출
+        String res = mp.getToken(msg, 2);
+        // 메뉴 콜백 인테페이스 호출
+        mc.onMealAddRes(id, res);
+    }
+
+    /**
+     * 운동 입력 요청 결과를 메뉴으로 리턴 메소드
+     * 
+     * @param msg 메시지
+     */
+    public void processWorkoutRes(String msg) {
+        // id 추출
+        String id = mp.findID(msg);
+        // 처리 결과 추출
+        String res = mp.getToken(msg, 2);
+        // 메뉴 콜백 인테페이스 호출
+        mc.onWorkoutAddRes(id, res);
+    }
+    
+    /**
+     * 체중 입력 요청 결과를 메뉴으로 리턴 메소드
+     * 
+     * @param msg 메시지
+     */
+    public void processWeightRes(String msg) {
+        // id 추출
+        String id = mp.findID(msg);
+        // 처리 결과 추출
+        String res = mp.getToken(msg, 2);
+        // 메뉴 콜백 인테페이스 호출
+        mc.onWeightAddRes(id, res);
+    }
+
+    /**
+     * 기록 조회 요청 결과를 메뉴으로 리턴 메소드
+     * 
+     * @param msg 메시지
+     */
+    public void processRecordRes(String msg) {
+        // id 추출
+        String id = mp.findID(msg);
+
+        ArrayList<RecordData> rd = new ArrayList<>();
+        // 메시지 뒤 부분이 "FAIL"이니면 
+        if (!(mp.isFail(msg))) {
+            // RecordData 객체로 분리
+            rd = mp.findParseRecordList(msg);
+        }
+        // "FAIL"이면 NULL
+        // 메뉴 콜백 인테페이스 호출
+        mc.onRecordRes(id, rd);
+    }
+
+    /**
+     * 진행률 요청 결과를 메뉴으로 리턴 메소드
+     * 
+     * @param msg 메시지
+     
+     */
+    public void processProgressRes(String msg) {
+        // id 추출
+        String id = mp.findID(msg);
+        // 초기 체중 
+        Double startWeight = null;
+        // 목표 체중
+        Double goalWeight = null;
+        // 현재 체중
+        Double currentWeight = null;
+        // 달성률
+        Double achievementRate = null;
+
+        // 메시지 뒤 부분이 "FAIL"이니면
+        if (!(mp.isFail(msg))) {
+            startWeight = Double.parseDouble(mp.getToken(msg, 2));
+            goalWeight = Double.parseDouble(mp.getToken(msg, 3));
+            currentWeight = Double.parseDouble(mp.getToken(msg, 4));
+            achievementRate = Double.parseDouble(mp.getToken(msg, 5));
+        }
+
+        Progress p = new Progress(startWeight, goalWeight, currentWeight, achievementRate);
+        
+        // 메뉴 콜백 인테페이스 호출
+        mc.onProgressRes(id, p);
+    }
+
+    /**
+     * 피드백 요청 결과를 메뉴으로 리턴 메소드
+     * 
+     * @param msg 메시지
+     * FEEDBACK_RES/사용자 ID/처리 결과(섭취+소모+잔여+권장/탄수화물_섭취량+탄수화물_권장량/단백질_섭취량+단백질_권장량/지방_섭취량+지방_권장량/음식 추천 리스트/운동 추천 리스트 or “FAIL”)
+     */
+    public void processFeedbackRes(String msg) {
+        // id 추출
+        String id = mp.findID(msg);
+        FeedbackResult fr = null;
+        if (!(mp.isFail(msg))) {
+            fr = mp.findFeedback(msg);
+        }
+
+        mc.onFeedbackRes(id, fr);
     }
 }

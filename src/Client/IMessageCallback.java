@@ -1,4 +1,12 @@
 package Client;
+
+import java.util.ArrayList;
+
+import Common.FeedbackResult;
+import Common.Progress;
+import Common.RecordData;
+
+
 /**
  * MenuCallback 인터페이스를 구현
  * MessageHandler에 자신을 등록
@@ -28,7 +36,7 @@ public interface IMessageCallback {
      * 
      * @param _res 처리 결과
      */
-    public void onSignupRes(String _res);
+    public void onSignupRes(String _id, String _res);
 
     /**
      * 회원 정보 수정 결과 처리 후 보낸 OK, FAIL 결과를 표시
@@ -39,29 +47,32 @@ public interface IMessageCallback {
     public void onUserUpdateRes(String id, String result);
 
     // 로그아웃
-    public void logoutRes(String result);
+    public void onLogoutRes(String result);
 
     // 화원 탈퇴
-    public void userDeleteRes(String userId, String result);
+    public void onUserDeleteRes(String userId, String result);
 
     // 식단 입력
-    public void mealAddRes(String userId, String result);
+    public void onMealAddRes(String userId, String result);
 
     // 운동 입력
-    public void workoutAddRes(String userId, String result);
+    public void onWorkoutAddRes(String userId, String result);
 
     // 현재 체중 입력
-    public void weightAddRes(String result);
+    public void onWeightAddRes(String userId, String result);
 
     // 기록
-    public void recordRes(String userId, String result);
+    public void onRecordRes(String userId, ArrayList<RecordData> list);
 
     // 진행률
-    public void progressRes(String userId, String result);
+    public void onProgressRes(String userId, Progress p);
 
     // 피드백
-    public void feedbackRes(String userId, String result);
+    public void onFeedbackRes(String userId, FeedbackResult fr);
     
+    // 메시지
+    public void onNormalMessageRes(String result);
+
     /**
      * 메시지 처리 에러 출력
      * 

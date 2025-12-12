@@ -2,13 +2,12 @@ package Server;
 
 import java.io.*;
 import java.net.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import Common.MessageBuilder;
-import Common.MessageParser;
-import Common.MessageType;
-import Common.User;
+import Common.*;
 
 /**
  * 연결된 클라이언트에 대한 보낸 메시지를 타입에 따라 처리 후 전송
@@ -61,7 +60,7 @@ class ConnectedClient extends Thread {
                 System.out.println("Server > " + msg);
 
                 typeMSG = mp.detection(msg);
-                // msgBasedService(typeMSG, msg);
+                msgBasedService(typeMSG, msg);
                 normalMessageOutput(this.socket.toString() + ": " + msg);
             }
         }
@@ -134,210 +133,65 @@ class ConnectedClient extends Thread {
      * @param _type 처리할 메지시 타입
      * @param _msg  처리할 메지시
      */
-    /* private void msgBasedService(Message _type, String _msg) {
+    private void msgBasedService(MessageType _type, String _msg) {
         switch (_type) {
-            case MSG : 
-                processMgs(_msg); 
-                processBroadCast(_msg);
-            break;
-            case USERLIST_REQ : processUserListReq(); break;
-            case WHISPER_REQ : processWhosperReq(_msg); break;
-            case EXIT_REQ : processExitReq(_msg); break;
-            case JOIN_REQ : processJoinReq(_msg); break;
-            case LOGIN_REQ : processLoginReq(_msg); break;
+            case EXIT_REQ:
+                // 종료 메시지 처리
+                
+                break;
+
+            case SIGNUP_REQ:
+                // 회원 가입 메시지 처리
+                processSignupReq(_msg);
+                break;
+
+            case LOGIN_REQ:
+                processLoginReq(_msg);
+                break;
+            case USER_UPDATE_REQ:
+                // 회원 정보 수정 메시지 처리
+                System.out.println("보류");
+                break;
+
+            case LOGOUT_REQ:
+                // 로그아웃 메시지 처리
+                processLogoutReq(_msg);
+                break;
+            case USER_DELETE_REQ:
+                // 회원 탈퇴 메시지 처리
+                System.out.println("보류");
+                break;
+            case MEAL_ADD_REQ:
+                // 식단 추가 메시지 처리
+                processMealAddReq(_msg);
+                break;
+            case WORKOUT_ADD_REQ:
+                // 운동 추가 메시지 처리
+                processWorkOutAddReq(_msg);
+                break;
+
+            case WEIGHT_ADD_REQ:
+                // 체중 추가 메시지 처리
+                processWeightAddReq(_msg);
+                break;
+
+            case RECORD_REQ:
+                // 기록 조회 메시지 처리
+                processRecordReq(_msg);
+                break;
+
+            case PROGRESS_REQ:
+                // 진행률 메시지 처리
+                processProgressReq(_msg);
+                break;
+
+            case FEEDBACK_REQ:
+                // 피드백 메시지 처리
+                processFeedbackReq(_msg);
+                break;            
             default : failMessageOutput("처리할 수 없는 메시지 타입입니다."); break;
         }
-    } */
-
-    /**
-     * 사용자 ID 처리하는 메소드
-     * 
-     * @param _msg 처리할 메지시
-     */
-    /* private void processId(String _msg) {
-        // 사용자가 보낸 전체메시지에서 사용자 ID 찾기
-        // 사용자 ID를 ConnectedClient 객체의 id필드에 대입하는 동직 필요
-        this.setID(mp.findID(_msg));
-        
-        // ID가 있다면 t, 없다면 f
-        boolean ok = !(getID().equals("NO_ID"));
-
-        // 사용자 ID 처리 결과 전달 확인용 메시지 생성
-        String cmsg = mb.idResMsg(id, ok ? "OK" : "FAIL");
-
-        // 연결된 Clien에게 생성 메시지 전달
-        sendMSG(MessageType.ID_RES, cmsg);
-        
-        // ID 처리가 성공이면 사용자에게 웰컴 메시지를 전송
-        if (ok) {
-            // 웰컴 메시지 생성
-            String wmsg = mb.welcomeMsg(getID());
-            // System.out.println(wmsg + " " + getID());
-            normalMessageOutput(wmsg + " " + getID());
-
-            // 웰컴 메시지 전달
-            sendMSG(MessageType.WELCOME, wmsg);
-        }
-    } */
-
-    /**
-     * 메시지 처리하는 메소드
-     * 
-     * @param _msg 처리할 메지시
-     */
-    /* private void processMgs(String _msg) {
-        // ID가 있다면 t, 없다면 f?
-        boolean ok = !(getID().equals("NO_ID"));
-        String id = mp.findID(_msg);
-        // 메시지 처리 결과 전달 확인용 메시지 생성
-        String cmsg = mb.msgResMsg(id, ok ? "OK" : "FAIL");
-        // 연결된 Clien에게 생성 메시지 전달
-        sendMSG(MessageType.MSG_RES, cmsg);
-    } */
-
-    /**
-     * 전체 사용자에서 전송하는 메소드
-     * 
-     * @param _msg 처리할 메지시
-     */
-   /*  private void processBroadCast(String _msg) {
-        // id 추출
-        String id = mp.findID(_msg);
-        // 메시지 추출
-        String m = mp.findBroadCastingMSG(_msg);
-        // 메시지 생성
-        String bmsg = mb.broadcasrMsg(id, m);
-        // 사용자 리스트 번호 
-        int i = 1;
-
-        // 접속한 전체 Client 메시지 생성 메시지 전달 
-        for (ConnectedClient cc : clients) {
-            System.out.println(i++ + ". " + cc.getID());
-
-            try {
-                // 자신 id와 같으면 제외
-                if (cc.getID().equals(id)) continue;
-                // 클라이안트에서 전체 메시지 전송
-                cc.sendMSG(MessageType.BROADCAST, bmsg);
-            }
-
-            // 예외 처리
-            catch (Exception e) {
-                failMessageOutput("접속한" + cc.getID() + "메시지 전송을 실패");
-            } 
-        }
-    } */
-
-    /**
-     * 현재 접속한 사용자들의 id 리스트를 처리하는 메소드
-     */
-    /* private void processUserListReq() {
-        // 사용자 ID 리스트
-        ArrayList<String> ulist = new ArrayList<>();
-
-        // 현재 접속한 사용자들의 ID를 추가
-        for (ConnectedClient cc : clients) {
-            ulist.add(cc.id);
-        }
-
-        // 사용자 ID 리스트 메시지 생성
-        String ulmsg = mb.userListMsg(ulist);
-
-        // 접속한 전체 Clien들의 id 리스트 생성 메시지 전송
-        sendMSG(MessageType.USERLIST, ulmsg);
     }
- */
-    /**
-     * 귓속말 전송하는 메소드
-     * 
-     * @param _msg 처리할 메지시
-     */
-    /* private void processWhosperReq(String _msg) {
-        // 보낸 사용자 ID
-        String from = mp.findID(_msg);
-        // 받은 사용자 ID
-        String to = mp.findWhisperRID(_msg);
-        // 보낼 메시지
-        String m = mp.findWhisperMsg(_msg);
-        // 귓속말 메시지 생성
-        String wmsg = mb.whisperMsg(from, m);
-        // 귓속말 전송, 성공 : 1, 실패 0
-        ConnectedClient ck = wishper(to, m);
-
-        // 사용자 ID가 "NO_ID"가 이나면 귓속말 대상에게 전송
-        if (ck != null) {
-            normalMessageOutput(from + "(from) -> " + to + "(to) : [ " + m + " ]");
-            // 귓속말 전송
-            ck.sendMSG(MessageType.WHISPER, wmsg);
-        }
-        else {
-            failMessageOutput("귓속말 전송 실패");
-            // 귓속말 전송 실패 메시지 전송
-            sendMSG(MessageType.WHISPER, mb.whisperMsg(to, "FAIL"));
-        }
-    } */
-
-    /**
-     * 프로그램 종료 여부를 판단하는 메소드
-     * 
-     * @param _msg 처리할 메지시
-     */
-    /* private void processExitReq(String _msg) {
-        // 메시지에서 ID 추출
-        String id = mp.findID(_msg);
-        // 종료 조건
-        boolean ok = !(id.equals("NO_ID")) || id == null ? true : false;
-        // 사용자가 프로그램 종료 허용 여부를 메시지 생성
-        String emsg = mb.exitResMsg(id, ok ? "OK" : "FAIL");
-        // 생성된 메시지를 전송
-        sendMSG(MessageType.EXIT_RES, emsg);
-        if (ok) normalMessageOutput("클래이언트(" + id + ")가 정성 종료 되었습니다.");
-    } */
-
-    /**
-     * 사용자가 회원가입 데이터를 파일에서 중복 검사 후 저장 및 처리 결과 메시지 전송하는 메소드
-     * 
-     * @param _msg 처리할 메지시
-     */
-    /* private void processJoinReq(String _msg) {
-        // 메시지를 "/"토큰으로 분리 -> 리스트에 저장
-        ArrayList<String> userData = mp.messageTokens(_msg);
-
-        // 리스트에서 회원 정보를 추가한다.        
-
-        // 파일에서 ID 중복 검사룰 한다.
-        // 파일 -> ID 중복 검사
-        boolean ok = ufm.saveUser(u);
-        System.out.println(ok);
-        // System.out.println(u.getID() + "ID TESTING...");
-        normalMessageOutput(u.getID() + "ID TESTING...");
-        // 회원가입 처리 결과 메시지 생성
-        String rmsg = mb.joinResMsg(userData.get(1), ok ? "OK" : "FAIL");
-        // 생성된 메시지 전송
-        sendMSG(MessageType.JOIN_RES, rmsg);
-    } */
-
-    // 로그인
-    /**
-     * 로그인를 처리하는 메소드
-     * 
-     * @param _msg 처리할 메지시
-     */
-    /* private void processLoginReq(String _msg) {
-        // 파일에서 사용자 정보를 검사
-        // id 추출
-        String id = mp.findID(_msg);
-        // pw 추출
-        String pw = mp.findPW(_msg);
-        // 결과 추출
-        boolean ok = ufm.checkLogin(id, pw);
-        // 검사 여부에 따라 OK, FAIL를 클라이언트에게 전송
-        String lmsg = mb.loginResMsg(id, ok ? "OK" : "FAIL");
-        // 메지시 전송
-        sendMSG(MessageType.LOGIN_RES, lmsg);
-        // id 처리 결과 전송
-        processId(_msg);
-    } */
 
     /**
      * 클라이언트 ID 수정는 메소드
@@ -365,6 +219,270 @@ class ConnectedClient extends Thread {
     }
 
     /**
+     * 프로그램 종료 여부를 판단하는 메소드
+     * 
+     * @param _msg 처리할 메지시
+     */
+    private void processExitReq(String _msg) {
+        // 메시지에서 ID 추출
+        String id = mp.findID(_msg);
+        // 종료 조건
+        boolean ok = !(id.equals("NO_ID")) || id == null ? true : false;
+        // 사용자가 프로그램 종료 허용 여부를 메시지 생성
+        String emsg = mb.exitRes(id, ok ? "OK" : "FAIL");
+        // 생성된 메시지를 전송
+        sendMSG(MessageType.EXIT_RES, emsg);
+        if (ok) normalMessageOutput("클래이언트(" + id + ")가 정성 종료 되었습니다.");
+    }
+
+    /**
+     * 사용자가 회원가입 데이터를 파일에서 중복 검사 후 저장 및 처리 결과 메시지 전송하는 메소드
+     * 
+     * @param _msg 처리할 메지시
+     */
+    private void processSignupReq(String _msg) {
+        // 메시지를 "/"토큰으로 분리 -> 리스트에 저장
+        ArrayList<String> userData = mp.messageTokens(_msg);
+
+        // 리스트에서 회원 정보를 추가한다.        
+        User u = new User(
+            userData.get(0), 
+            userData.get(1), 
+            Boolean.parseBoolean(userData.get(3)), 
+            Double.parseDouble(userData.get(4)),
+            Integer.parseInt(userData.get(5)), 
+            Double.parseDouble(userData.get(6)),
+            Double.parseDouble(userData.get(7))
+        );
+        // 파일에서 ID 중복 검사룰 한다.
+        // 파일 -> ID 중복 검사
+        boolean ok = true;
+        System.out.println(ok);
+        // System.out.println(u.getID() + "ID TESTING...");
+        normalMessageOutput(u.getID() + "ID TESTING...");
+        // 회원가입 처리 결과 메시지 생성
+        String rmsg = mb.signupRes(userData.get(1), ok ? "OK" : "FAIL");
+        // 생성된 메시지 전송
+        sendMSG(MessageType.SIGNUP_RES, rmsg);
+    }
+
+    // 로그인
+    /**
+     * 로그인를 처리하는 메소드
+     * 
+     * @param _msg 처리할 메지시
+     */
+    private void processLoginReq(String _msg) {
+        // 파일에서 사용자 정보를 검사
+        // id 추출
+        String id = mp.findID(_msg);
+        // pw 추출
+        String pw = mp.findPW(_msg);
+        // 결과 추출
+        // TODO : DB에서 ID, PW 검사
+        // ufm.checkLogin(id, pw);
+        boolean ok = (id.equals("id1") && pw.equals("1234"));
+        // 검사 여부에 따라 OK, FAIL를 클라이언트에게 전송
+        String lmsg = mb.loginRes(id, ok ? "OK" : "FAIL");
+        if (ok) this.setID(mp.findID(_msg));
+        // 메지시 전송
+        sendMSG(MessageType.LOGIN_RES, lmsg);
+    }
+
+    /**
+     * 로그아웃을 처리하는 메소드
+     * 
+     * @param _msg 처리할 메지시
+     */
+    private void processLogoutReq(String _msg) {
+        // TODO : 로그아웃을 하는 클라이언트 종료
+        String id = mp.findID(_msg);
+        
+    }
+
+    /**
+     * 음식을 처리하는 메소드
+     * @param _msg 처리할 메지시
+     */
+    private void processMealAddReq(String _msg) {
+        String id = mp.findID(_msg);
+        
+        // MEAL_ADD_REQ/사용자 ID/날짜+시간/음식 타입/음식명/섭취량
+        TimeConversion tc = new TimeConversion();
+        LocalDateTime ldt = tc.strToTime(mp.getToken(_msg, 2));
+        String foodType = mp.getToken(_msg,3);
+        String foodName = mp.getToken(_msg,4);
+        Double g = Double.parseDouble(mp.getToken(_msg,5));
+
+        Meal m = new Meal(id, ldt, foodType, foodName, g, 0, 0, 0, 0); 
+        // TODO : DB에 음식 산입 결과 구현
+        boolean ok = true;
+        String rmsg = mb.mealAddRes(id, ok ? "OK" : "FAIL");
+        sendMSG(MessageType.MEAL_ADD_RES, rmsg);
+    }
+
+    /**
+     * 운동을 처리하는 메소드
+     * 
+     * @param _msg 처리할 메지시
+     * WORKOUT_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”) 메시지
+     * Workout(String id, String exerciseName, double minutes, double kcal) 객체 활용
+     */
+    private void processWorkOutAddReq(String _msg) {
+        // ArrayList<String> tokens = mp.messageTokens(_msg);
+        TimeConversion tc = new TimeConversion();
+
+        String id = mp.getToken(_msg, 1);
+        LocalDateTime datetime = tc.strToTime(mp.getToken(_msg, 2));
+        String workoutName = mp.getToken(_msg, 3);
+        double minutes = Double.parseDouble(mp.getToken(_msg, 4));
+
+        // Workout 객체 생성
+        Workout w = new Workout(datetime, workoutName, minutes, 0); // kcal은 서버에서 계산하면 넣기
+
+        // TODO: DB에 운동 저장 처리
+        boolean ok = true;  // DB 처리 결과
+
+        // 응답 메시지 생성
+        String rmsg = mb.workoutAddRes(id, ok ? "OK" : "FAIL");
+
+        // 클라이언트로 전송
+        sendMSG(MessageType.WORKOUT_ADD_RES, rmsg);
+    }
+
+    /**
+     * 체중을 처리하는 메소드
+     * 
+     * @param _msg 처리할 메지시
+     * WEIGHT_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”) 메시지
+     * Weight(String id, LocalDate date, double weight) 객체 활용
+     */
+    private void processWeightAddReq(String _msg) {
+        String id = mp.findID(_msg);
+        LocalDate date = LocalDate.parse(mp.getToken(_msg, 2));
+        double weight = Double.parseDouble(mp.getToken(_msg, 3));
+
+        Weight w = new Weight(date, weight);
+
+        // TODO: DB에 체중 저장
+        boolean ok = true;
+
+        String rmsg = mb.weightAddRes(ok ? "OK" : "FAIL");
+
+        sendMSG(MessageType.WEIGHT_ADD_RES, rmsg);
+    }
+
+    /**
+     * 기록을 처리하는 메소드
+     * 
+     * @param _msg 처리할 메지시
+     * RECORD_RES/사용자 ID/처리 결과(날짜1(식단명,운동명,체중)+…+날짜n(식단명,운동명,체중) or “FAIL”) 메시지
+     * RecordData(LocalDate date, String meal, String workout, Double weight) 기록 객체
+     */
+    private void processRecordReq(String _msg) {
+        String id = mp.findID(_msg);
+        // TODO: DB에서 id의 기록 데이터를 조회
+        // ArrayList<RecordData> list = DB.getRecords(id);
+        boolean exists = true;
+
+        if (!exists) {
+            sendMSG(MessageType.RECORD_RES, id + "/FAIL");
+            return;
+        }
+
+        ArrayList<RecordData> list = new ArrayList<>();
+
+        // TODO: 임시 샘플 (DB 조회된 값)
+        list.add(new RecordData(LocalDate.now(), "고구마", "걷기", 72.4));
+
+        String rmsg = mb.recordRes(id, list);
+        sendMSG(MessageType.RECORD_RES, rmsg);
+    }
+
+    /**
+     * 진행률을 처리하는 메소드
+     * 
+     * @param _msg 처리할 메지시
+     * PROGRESS_RES/사용자 ID/처리 결과(초기 체중/목표 체중/현재 체중/달성률 or “FAIL”) 메시지
+     */
+    private void processProgressReq(String _msg) {
+        String id = mp.findID(_msg);
+
+        // TODO: DB에서 초기/목표/현재 체중 조회
+        boolean ok = true;
+
+        double initial = 80;
+        double goal = 70;
+        double current = 75;
+        double progress = (initial - current) / (initial - goal) * 100.0;
+
+        Progress p = new Progress(initial, goal, current, progress);
+
+        if (!ok) {
+            sendMSG(MessageType.PROGRESS_RES, id + "/FAIL");
+            return;
+        }
+
+        String rmsg = mb.progressRes(id, p);
+        sendMSG(MessageType.PROGRESS_RES, rmsg);
+    }
+
+    /**
+     * 피드백을 처리하는 메소드
+     * 
+     * @param _msg 처리할 메지시
+     * FEEDBACK_RES/사용자 ID/처리 결과(섭취+소모+잔여+권장/탄수화물_섭취량+탄수화물_권장량/단백질_섭취량+단백질_권장량/지방_섭취량+지방_권장량/음식 추천 리스트/운동 추천 리스트 or “FAIL”) 메시지
+     * FeedbackResult(
+     *  int intake, int burn, int remain, 
+     *  int recommendCal, int carbIntake, int carbRecommend, 
+     *  int proteinIntake, int proteinRecommend, int fatIntake, 
+     *  int fatRecommend, ArrayList<String> 
+     *  foodRecommend, ArrayList<String> workoutRecommend) 피그백 객체
+     */
+    private void processFeedbackReq(String _msg) {
+        String id = mp.findID(_msg);
+
+        // TODO: DB에서 음식, 운동, 칼로리, 영양소 요약 데이터 조회
+        boolean ok = true;
+
+        if (!ok) {
+            sendMSG(MessageType.FEEDBACK_RES, id + "/FAIL");
+            return;
+        }
+
+        // 예시 샘플
+        int intake = 1800;
+        int burn = 300;
+        int remain = intake - burn;
+        int recommendCal = 2000;
+
+        int carbIntake = 210, carbRec = 250;
+        int proIntake = 55, proRec = 60;
+        int fatIntake = 78, fatRec = 55;
+
+        ArrayList<String> foodRecommend = new ArrayList<>();
+        foodRecommend.add("닭가슴살");
+        foodRecommend.add("현미밥");
+
+        ArrayList<String> workoutRecommend = new ArrayList<>();
+        workoutRecommend.add("빠르게 걷기");
+        workoutRecommend.add("스쿼트");
+
+        FeedbackResult fr = new FeedbackResult(
+                intake, burn, remain, recommendCal,
+                carbIntake, carbRec,
+                proIntake, proRec,
+                fatIntake, fatRec,
+                foodRecommend, workoutRecommend);
+
+        String rmsg = mb.feedbackRes(id, fr);
+        sendMSG(MessageType.FEEDBACK_RES, rmsg);
+    }
+
+
+
+
+    /**
      * 사용자 메시지를 전송 메소드
      * 
      * @param _mt 메시지 타입
@@ -384,27 +502,6 @@ class ConnectedClient extends Thread {
             failMessageOutput("메시지 전송 실패 : " + _mt.getType());
             // System.err.println("메시지 전송 실패 : " + _mt.getType());
         }
-    }
-
-    /**
-     * 귓속말 대상을 사용자 리스트에서 찾는 메소드
-     * 
-     * @param _toID 상대방 id
-     * @param _msg  메시지
-     * @return 상대방 클라이언트 리턴
-     */
-    public ConnectedClient wishper(String _toID, String _msg) {
-        // 상대방 클라이언트를 반복하여 검사한다.
-        for (ConnectedClient cc : clients) {
-            // 반복 중 그 클라이언크 ID와 이 클라이언트와 값고, 클라이언트 자신이 아니어야한다.
-            if (cc.getID().equals(_toID) && cc.getID() != this.getID()) {
-                // 상대방 클라이언트가 있다면 리턴
-                return cc;
-            }
-        }
-
-        // 상대방 클라이언트가 없다면 null를 리턴
-        return null;
     }
 
     /**

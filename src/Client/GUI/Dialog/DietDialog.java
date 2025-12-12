@@ -78,4 +78,6 @@ public class DietDialog extends JDialog {
         setSize(350, 250);
         setLocationRelativeTo(owner);
     }
+
+    
 }

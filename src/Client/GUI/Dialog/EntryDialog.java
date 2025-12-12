@@ -1,17 +1,32 @@
 package Client.GUI.Dialog;
 
 import javax.swing.*;
+
+import Client.ClientSender;
+import Client.MessageRouter;
+import Client.MessageRouter.LoginHandler;
+// import Client.MessageRouter;
 import Client.GUI.Frame.MainFrame;
+import Common.MessageBuilder;
+import Common.MessageType;
 
 import java.awt.*;
 
-public class EntryDialog extends JDialog {
+public class EntryDialog extends JDialog implements LoginHandler {
 
     private JTextField txtId;
     private JPasswordField txtPw;
+    private MessageRouter mr = new MessageRouter();
+    private ClientSender sender;
+    private MessageBuilder mb = new MessageBuilder();
+    private RegisterDialog register;
 
-    public EntryDialog(Frame owner) {
+    public EntryDialog(Frame owner, ClientSender sender, MessageRouter mr) {
         super(owner, "로그인", true);
+        this.sender = sender;
+        this.mr = mr;
+
+        register = new RegisterDialog(this, sender, mr);
 
         setLayout(new BorderLayout(5, 5));
 
@@ -38,7 +53,7 @@ public class EntryDialog extends JDialog {
         btnPanel.add(btnRegister);
 
         add(btnPanel, BorderLayout.SOUTH);
-
+        
         // 로그인 버튼 이벤트
         btnLogin.addActionListener(e -> {
             String id = txtId.getText().trim();
@@ -48,20 +63,12 @@ public class EntryDialog extends JDialog {
                 JOptionPane.showMessageDialog(this, "ID와 PW를 모두 입력하세요.");
                 return;
             }
-
-            // TODO: DB 인증 연결
-            JOptionPane.showMessageDialog(this, "로그인 성공!");
-
-            // MainFrame 실행 
-            MainFrame main = new MainFrame(id);
-            main.setVisible(true);
-
-            dispose();
+            sender.sendMSG(MessageType.LOGIN_REQ, mb.loginReq(id, pw));
         });
 
         // 회원가입 버튼 이벤트
         btnRegister.addActionListener(e -> {
-            RegisterDialog register = new RegisterDialog(this);
+            // mr.setRegisterDialog(register);
             register.setVisible(true);
         });
 
@@ -69,5 +76,17 @@ public class EntryDialog extends JDialog {
         setSize(350, 180);
         setResizable(false);
         setLocationRelativeTo(null);
+    }
+    
+    public void handleLoginRes(String id, String result) {
+        System.out.println(this.getName() + " 응답");
+        if (result.equals("OK")) {
+            JOptionPane.showMessageDialog(this, "로그인 성공!");
+            new MainFrame(id, sender, mr).setVisible(true);
+            dispose();
+        } 
+        else {
+            JOptionPane.showMessageDialog(this, "로그인 실패");
+        }
     }
 }

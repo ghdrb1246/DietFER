@@ -3,19 +3,15 @@ package Common;
 import java.time.LocalDate;
 
 public class Weight {
-    // 사용자 ID
-    private String id;
     // 등록 날짜
     private LocalDate date;
     // 현재 체중
     private double weight;
     
-    /**
-     * 사용자 id getter 메소드
-     * 
-     * @return 사용자 id 리턴
-     */
-    public String getId() { return id; }
+    public Weight(LocalDate date, double weight) {
+        this.date = date;
+        this.weight = weight;
+    }
 
     /**
      * 등록 날짜 getter 메소드
@@ -30,14 +26,7 @@ public class Weight {
      * @return 사용자 id 리턴
      */
     public double getWeight() { return weight; }
-
-    /**
-     * 사용자 ID setter 메소드
-     * 
-     * @param id 수정할 사용자 ID
-     */
-    public void setId(String id) { this.id = id; }
-
+    
     /**
      * 등록 날짜 setter 메소드
      * 

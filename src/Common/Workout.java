@@ -3,8 +3,6 @@ package Common;
 import java.time.LocalDateTime;
 
 public class Workout {
-    // 사용자 ID
-    private String id;
     // 등록 날짜+시간
     private LocalDateTime dateTime;
     // 운동 명
@@ -25,19 +23,12 @@ public class Workout {
      * @param minutes 운동 시간
      * @param kcal 소모 칼로리
      */
-    public Workout(String id, String exerciseName, double minutes, double kcal) {
-        this.id = id;
+    public Workout(LocalDateTime dateTime, String exerciseName, double minutes, double kcal) {
+        this.dateTime = dateTime;
         this.exerciseName = exerciseName;
         this.minutes = minutes;
         this.kcal = kcal;    
     }
-
-    /**
-     * 사용자 id getter 메소드
-     * 
-     * @return 사용자 id 리턴
-     */
-    public String getId() { return id; }
 
     /**
      * 등록 날짜+시간 getter 메소드
@@ -66,13 +57,6 @@ public class Workout {
      * @return 소모 칼로리 리턴
      */
     public double getKcal() { return kcal; }
-
-    /**
-     * 사용자 ID setter 메소드
-     * 
-     * @param id 수정할 사용자 ID
-     */
-    public void setId(String id) { this.id = id; }
 
     /**
      * 등록 날짜+시간 setter 메소드
@@ -105,7 +89,7 @@ public class Workout {
     @Override
     public String toString() {
         return (
-            "Workout [id=" + id + 
+            "Workout [" + 
             ", dateTime=" + dateTime + 
             ", exerciseName=" + exerciseName + 
             ", minutes=" + minutes + 

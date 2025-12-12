@@ -2,19 +2,27 @@ package Client.GUI.Frame;
 
 import javax.swing.*;
 
+import Client.ClientSender;
+import Client.MessageRouter;
 import Client.GUI.Dialog.EntryDialog;
 import Client.GUI.Panel.AnalysisPanel;
 import Client.GUI.Panel.DataInputPanel;
+import Common.MessageType;
+
 import java.awt.*;
 
 public class MainFrame extends JFrame {
     private String userId;
     private AnalysisPanel analysisPanel; // 다이어트 분석 패널
     private DataInputPanel dataInputPanel; // 데이터 입력 패널
+    private ClientSender sender = null;
+    private MessageRouter mr;
 
-    public MainFrame(String userId) {
+    public MainFrame(String userId, ClientSender sender, MessageRouter mr) {
         super("다이어트 분석 시스템 - 메인");
         this.userId = userId;
+        this.sender = sender;
+        this.mr = mr;
 
         // 메뉴바 구성
         createMenuBar();
@@ -31,6 +39,14 @@ public class MainFrame extends JFrame {
         // 프레임 크기 설정
         setSize(600, 400);
         // setLocationRelativeTo(null);
+    }
+
+    public DataInputPanel getInputPanel() {
+        return dataInputPanel;
+    }
+
+    public AnalysisPanel getAnalysisPanel() {
+        return analysisPanel;
     }
 
     /** 메뉴바 생성 메소드 */
@@ -57,12 +73,15 @@ public class MainFrame extends JFrame {
                     JOptionPane.YES_NO_OPTION);
 
             if (result == JOptionPane.YES_OPTION) {
+                // 로그아웃 요청
+                sender.sendMSG(MessageType.SIGNUP_REQ, userId);
+
                 JOptionPane.showMessageDialog(this, "로그아웃 완료");
                 dispose(); // 메인 프레임 닫기
 
                 // 다시 EntryDialog 열기
-                EntryDialog entry = new EntryDialog(null);
-                entry.setVisible(true);
+                // EntryDialog entry = new EntryDialog(null, sender, mr);
+                // entry.setVisible(true);
             }
         });
 
@@ -80,7 +99,7 @@ public class MainFrame extends JFrame {
                 dispose();
 
                 // 회원탈퇴 후 EntryDialog로 이동
-                EntryDialog entry = new EntryDialog(null);
+                EntryDialog entry = new EntryDialog(null, sender, mr);
                 entry.setVisible(true);
             }
         });

@@ -1,4 +1,7 @@
 package Common;
+
+import java.util.ArrayList;
+
 /**
  * 메시지 생성 클래스
  */
@@ -157,7 +160,7 @@ public class MessageBuilder {
      * 회원 탈퇴 처리 결과
      * 
      * @param result 처리 결과
-     * @return USER_DELETE_REQ/처리 결과(“OK” or “FAIL”)
+     * @return USER_DELETE_REQ/사용자 ID/처리 결과(“OK” or “FAIL”)
      */
     public String userDeleteRes(String userId, String result) {
         return build(MessageType.USER_DELETE_RES, result);
@@ -196,10 +199,10 @@ public class MessageBuilder {
      * @param w 운동
      * @return WORKOUT_ADD_REQ/사용자 ID/날짜+시간/운동명/운동 시간
      */
-    public String workoutAddReq(Workout wk) {
+    public String workoutAddReq(String userId, Workout wk) {
         return build(
             MessageType.WORKOUT_ADD_REQ, 
-            wk.getId(), 
+            userId,
             wk.getDateTime().toString(), 
             wk.getExerciseName(), 
             String.valueOf(wk.getMinutes())
@@ -218,17 +221,17 @@ public class MessageBuilder {
     }
 
     /**
-     * 현재 체중 입력 추가 요청
+     * 체중 입력 추가 요청
      * 
      * @param w 체중
      * @return WEIGHT_ADD_REQ/사용자 ID/날짜/체중
      */
-    public String weightAddReq(Weight w) {
-        return build(MessageType.WEIGHT_ADD_REQ, w.getId(), w.getDate().toString(), String.valueOf(w.getWeight()));
+    public String weightAddReq(String userId, Weight w) {
+        return build(MessageType.WEIGHT_ADD_REQ, userId, w.getDate().toString(), String.valueOf(w.getWeight()));
     }
 
     /**
-     * 현재 체중 입력 추가 처리 결과
+     * 체중 입력 추가 처리 결과
      * 
      * @param userId 사용자 ID
      * @param result 처리 결과
@@ -255,8 +258,31 @@ public class MessageBuilder {
      * @param result 처리 결과
      * @return RECORD_RES/사용자 ID/처리 결과(날짜1(식단명,운동명,체중)+…+날짜n(식단명,운동명,체중) or “FAIL”)
      */
-    public String recordRes(String userId, String result) {
-        return build(MessageType.RECORD_RES, userId, result);
+    public String recordRes(String userId, ArrayList<RecordData> result) {
+        if (result == null || result.isEmpty()) {
+            return MessageType.RECORD_RES + "/" + userId + "/FAIL";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageType.RECORD_RES).append("/");
+        sb.append(userId).append("/");
+
+        for (int i = 0; i < result.size(); i++) {
+            RecordData r = result.get(i);
+
+            sb.append(r.date.toString()) // LocalDate → String
+                    .append("(")
+                    .append(r.mealName).append(",")
+                    .append(r.workoutName).append(",")
+                    .append(r.weight)
+                    .append(")");
+
+            if (i < result.size() - 1) {
+                sb.append("+");
+            }
+        }
+
+        return sb.toString();
     }
 
     /**
@@ -276,8 +302,8 @@ public class MessageBuilder {
      * @param result 처리 결과
      * @return PROGRESS_RES/사용자 ID/처리 결과(초기 체중/목표 체중/현재 체중/달성률 or “FAIL”)
      */
-    public String progressRes(String userId, String result) {
-        return build(MessageType.PROGRESS_RES, userId, result);
+    public String progressRes(String userId, Progress p) {
+        return build(MessageType.PROGRESS_RES, userId, String.valueOf(p.getInitial()), String.valueOf(p.getGoal()), String.valueOf(p.getCurrent()), String.valueOf(p.getProgress()));
     }
 
     /**
@@ -296,17 +322,67 @@ public class MessageBuilder {
      * @param userId 사용자 ID
      * @param result 처리 결과
      * @return FEEDBACK_RES/
-     * 사용자 ID/
-     * 처리 결과(
-     *  섭취+소모+잔여+권장/
-     *  탄수화물_섭취량+탄수화물_권장량/
-     *  단백질_섭취량+단백질_권장량/
-     *  지방_섭취량+지방_권장량/
-     *  음식 추천 리스트/
-     *  운동 추천 리스트 or “FAIL”
-     * )
+     *         사용자 ID/
+     *         처리 결과(
+     *         섭취+소모+잔여+권장/
+     *         탄수화물_섭취량+탄수화물_권장량/
+     *         단백질_섭취량+단백질_권장량/
+     *         지방_섭취량+지방_권장량/
+     *         음식 추천 리스트/
+     *         운동 추천 리스트 or “FAIL”
+     *         )
      */
-    public String feedbackRes(String userId, String result) {
-        return build(MessageType.FEEDBACK_RES, userId, result);
+    public String feedbackRes(String userId, FeedbackResult result) {
+        if (!result.getSuccess()) {
+            return MessageType.FEEDBACK_RES + "/" + userId + "/FAIL";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageType.FEEDBACK_RES).append("/");
+        sb.append(userId).append("/");
+
+        // 섭취+소모+잔여+권장
+        sb.append(result.getIntake()).append("+")
+        .append(result.getBurn()).append("+")
+        .append(result.getRemain()).append("+")
+        .append(result.getRecommendCal()).append("/");
+
+        // 탄수화물
+        sb.append(result.getCarbIntake()).append("+")
+        .append(result.getCarbRecommend()).append("/");
+
+        // 단백질
+        sb.append(result.getProteinIntake()).append("+")
+        .append(result.getProteinRecommend()).append("/");
+
+        // 지방
+        sb.append(result.getFatIntake()).append("+")
+        .append(result.getFatRecommend()).append("/");
+
+        // 음식 추천
+        ArrayList<String> food = result.getFoodRecommend();
+        for (int i = 0; i < food.size(); i++) {
+            sb.append(food.get(i));
+            if (i < food.size() - 1) sb.append("+");
+        }
+        sb.append("/");
+
+        // 운동 추천
+        ArrayList<String> workout = result.getWorkoutRecommend();
+        for (int i = 0; i < workout.size(); i++) {
+            sb.append(workout.get(i));
+            if (i < workout.size() - 1) sb.append("+");
+        }
+
+        return sb.toString();
+    }
+
+    public String msgReq(String userId, String msg) {
+        return MessageType.MSG_REQ + "/" + userId + "/" + msg;
+        // return build(MessageType.MSG_REQ, userId, msg);
+    }
+
+    public String msgRes(String userId, String result) {
+        return build(MessageType.MSG_RES, userId, result);
     }
 }
