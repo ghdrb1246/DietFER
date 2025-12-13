@@ -1,0 +1,62 @@
+package Server.DB;
+
+import java.sql.*;
+import java.time.LocalDate;
+
+import Common.Workout;
+
+public class WorkoutDAO {
+
+    public boolean insert(String userId, Workout w) {
+        String sql = """
+            INSERT INTO workouts
+            (user_id, workout_time, exercise_name, minutes, kcal)
+            VALUES (?, ?, ?, ?, ?)
+        """;
+
+        try (Connection conn = DBC.connect();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, userId);
+            ps.setTimestamp(2, Timestamp.valueOf(w.getDateTime()));
+            ps.setString(3, w.getExerciseName());
+            ps.setDouble(4, w.getMinutes());
+            ps.setDouble(5, w.getKcal());
+
+            return ps.executeUpdate() == 1;
+
+        } 
+        catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } 
+        finally {
+            DBC.close();
+        }
+    }
+
+    // 일일 소모 칼로리 조회
+    public int getDailyBurnCal(String userId, LocalDate date) {
+        String sql = """
+            SELECT IFNULL(SUM(kcal),0) AS burn
+            FROM workouts
+            WHERE user_id = ? AND DATE(workout_time) = ?
+        """;
+
+        try (Connection conn = DBC.connect();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, userId);
+            ps.setDate(2, Date.valueOf(date));
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt("burn");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBC.close();
+        }
+        return 0;
+    }
+}

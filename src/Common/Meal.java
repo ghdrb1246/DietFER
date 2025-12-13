@@ -19,7 +19,7 @@ public class Meal {
     // 단백질
     private double protein;
     // 지방
-    private double province;
+    private double fat;
 
     // 기본 생성자
     public Meal() {}
@@ -27,16 +27,16 @@ public class Meal {
     /**
      * 음식 생성자
      * 
-     * @param dateTime      등록 날짜+시간
-     * @param foodTypr      음식 타입
-     * @param foodName      음식명
-     * @param gram          섭취량
-     * @param kcal          음식 컬로리
-     * @param carbohydrate  탄수화물
-     * @param protein       단백질
-     * @param province      지방
+     * @param dateTime     등록 날짜+시간
+     * @param foodTypr     음식 타입
+     * @param foodName     음식명
+     * @param gram         섭취량
+     * @param kcal         음식 컬로리
+     * @param carbohydrate 탄수화물
+     * @param protein      단백질
+     * @param fat          지방
      */
-    public Meal(LocalDateTime dateTime, String foodName, String foodTypr, double gram, double kcal, double carbohydrate, double protein, double province) {
+    public Meal(LocalDateTime dateTime, String foodName, String foodTypr, double gram, double kcal, double carbohydrate, double protein, double fat) {
         this.dateTime = dateTime;
         this.foodTypr = foodTypr;
         this.foodName = foodName;
@@ -44,7 +44,7 @@ public class Meal {
         this.kcal = kcal;
         this.carbohydrate = carbohydrate;
         this.protein = protein;
-        this.province = province;
+        this.fat = fat;
     }
 
     /**
@@ -101,7 +101,7 @@ public class Meal {
      * 
      * @return 사용자 지방 리턴
      */
-    public double getProvince() { return province; }
+    public double getFat() { return fat; }
 
     /**
      * 등록 날짜+시간 setter 메소드
@@ -155,9 +155,9 @@ public class Meal {
     /**
      * 지방 setter 메소드
      * 
-     * @param province 수정할 지방
+     * @param fat 수정할 지방
      */
-    public void setProvince(double province) { this.province = province; }
+    public void setFat(double fat) { this.fat = fat; }
 
     @Override
     public String toString() {
@@ -169,7 +169,7 @@ public class Meal {
             ", kcal=" + kcal + 
             ", carbohydrate=" + carbohydrate + 
             ", protein=" + protein + 
-            ", province=" + province + 
+            ", province=" + fat + 
             "]"
         );
     }

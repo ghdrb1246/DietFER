@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import Common.*;
+import Server.DB.MealDAO;
+import Server.DB.RecordDAO;
+import Server.DB.UserDAO;
+import Server.DB.WeightDAO;
+import Server.DB.WorkoutDAO;
 
 /**
  * 연결된 클라이언트에 대한 보낸 메시지를 타입에 따라 처리 후 전송
@@ -221,8 +226,8 @@ class ConnectedClient extends Thread {
 
         // 리스트에서 회원 정보를 추가한다.        
         User u = new User(
-            userData.get(0), 
             userData.get(1), 
+            userData.get(2), 
             Boolean.parseBoolean(userData.get(3)), 
             Double.parseDouble(userData.get(4)),
             Integer.parseInt(userData.get(5)), 
@@ -231,15 +236,15 @@ class ConnectedClient extends Thread {
         );
         // 파일에서 ID 중복 검사룰 한다.
         // 파일 -> ID 중복 검사
-        boolean ok = true;
+        boolean ok = new UserDAO().insert(u);
         System.out.println(userData.get(1));
         System.out.println(u.toString());
         // System.out.println(u.getID() + "ID TESTING...");
-        // normalMessageOutput(u.getID() + "ID TESTING...");
+        normalMessageOutput(u.getID() + "ID TESTING...");
         // 회원가입 처리 결과 메시지 생성
-        // String rmsg = mb.signupRes(userData.get(1), ok ? "OK" : "FAIL");
+        String rmsg = mb.signupRes(userData.get(1), ok ? "OK" : "FAIL");
         // 생성된 메시지 전송
-        // sendMSG(MessageType.SIGNUP_RES, rmsg);
+        sendMSG(MessageType.SIGNUP_RES, rmsg);
     }
 
     // 로그인
@@ -257,10 +262,11 @@ class ConnectedClient extends Thread {
         // 결과 추출
         // TODO : DB에서 ID, PW 검사
         // ufm.checkLogin(id, pw);
-        boolean ok = (id.equals("id1") && pw.equals("1234"));
+        // boolean ok = (id.equals("id1") && pw.equals("1234"));
+        User u = new UserDAO().login(id, pw);
         // 검사 여부에 따라 OK, FAIL를 클라이언트에게 전송
-        String lmsg = mb.loginRes(id, ok ? "OK" : "FAIL");
-        if (ok) this.setID(mp.findID(_msg));
+        String lmsg = mb.loginRes(id, (u != null) ? "OK" : "FAIL");
+        if (u != null) this.setID(mp.findID(_msg));
         // 메지시 전송
         sendMSG(MessageType.LOGIN_RES, lmsg);
     }
@@ -293,7 +299,7 @@ class ConnectedClient extends Thread {
 
         Meal m = new Meal(ldt, foodType, foodName, g, 0, 0, 0, 0); 
         // TODO : DB에 음식 산입 결과 구현
-        boolean ok = true;
+        boolean ok = new MealDAO().insert(id, m);
         String rmsg = mb.mealAddRes(id, ok ? "OK" : "FAIL");
         
         sendMSG(MessageType.MEAL_ADD_RES, rmsg);
@@ -319,7 +325,7 @@ class ConnectedClient extends Thread {
         Workout w = new Workout(datetime, workoutName, minutes, 0); // kcal은 서버에서 계산하면 넣기
 
         // TODO: DB에 운동 저장 처리
-        boolean ok = true;  // DB 처리 결과
+        boolean ok = new WorkoutDAO().insert(id, w);  // DB 처리 결과
 
         // 응답 메시지 생성
         String rmsg = mb.workoutAddRes(id, ok ? "OK" : "FAIL");
@@ -342,7 +348,7 @@ class ConnectedClient extends Thread {
         Weight w = new Weight(date, weight);
 
         // TODO: DB에 체중 저장
-        boolean ok = true;
+        boolean ok = new WeightDAO().insert(id, w);
 
         String rmsg = mb.weightAddRes(id, ok ? "OK" : "FAIL");
 
@@ -360,19 +366,18 @@ class ConnectedClient extends Thread {
         String id = mp.findID(_msg);
         // TODO: DB에서 id의 기록 데이터를 조회
         // ArrayList<RecordData> list = DB.getRecords(id);
-        boolean exists = true;
+        ArrayList<RecordData> list = new RecordDAO().findRecordsByUser(id);
 
-        if (!exists) {
+        if (list == null) {
             sendMSG(MessageType.RECORD_RES, id + "/FAIL");
             return;
         }
 
-        ArrayList<RecordData> list = new ArrayList<>();
-
         // TODO: 임시 샘플 (DB 조회된 값)
-        list.add(new RecordData(LocalDateTime.now(), "고구마", "걷기", 72.4));
-        list.add(new RecordData(LocalDateTime.now().plusDays(1), "감자", "달리기", 72.3));
-        list.add(new RecordData(LocalDateTime.now().plusDays(2), "시리얼", "기타", 72.2));
+        // ArrayList<RecordData> list = new ArrayList<>();
+        // list.add(new RecordData(LocalDateTime.now(), "고구마", "걷기", 72.4));
+        // list.add(new RecordData(LocalDateTime.now().plusDays(1), "감자", "달리기", 72.3));
+        // list.add(new RecordData(LocalDateTime.now().plusDays(2), "시리얼", "기타", 72.2));
 
         String rmsg = mb.recordRes(id, list);
         System.out.println(rmsg);
@@ -389,14 +394,15 @@ class ConnectedClient extends Thread {
         String id = mp.findID(_msg);
 
         // TODO: DB에서 초기/목표/현재 체중 조회
-        boolean ok = true;
+        Progress p = new ProgressService().getProgress(id);
+        boolean ok = (p != null);
 
-        double initial = 80;
-        double goal = 70;
-        double current = 75;
-        double progress = (initial - current) / (initial - goal) * 100.0;
+        // double initial = 80;
+        // double goal = 70;
+        // double current = 75;
+        // double progress = (initial - current) / (initial - goal) * 100.0;
 
-        Progress p = new Progress(initial, goal, current, progress);
+        // Progress p = new Progress(initial, goal, current, progress);
 
         if (!ok) {
             sendMSG(MessageType.PROGRESS_RES, id + "/FAIL");
@@ -421,18 +427,17 @@ class ConnectedClient extends Thread {
      *  foodRecommend, ArrayList<String> workoutRecommend) 피그백 객체
      */
     private void processFeedbackReq(String _msg) {
-        // System.out.println(_msg);
-
         String id = mp.findID(_msg);
 
         // TODO: DB에서 음식, 운동, 칼로리, 영양소 요약 데이터 조회
-        boolean ok = true;
+        FeedbackResult fr = new FeedbackService().getFeedback(id);
+        boolean ok = (fr != null);
 
         if (!ok) {
             sendMSG(MessageType.FEEDBACK_RES, id + "/FAIL");
             return;
         }
-
+/* 
         // 예시 샘플
         int intake = 1800;
         int burn = 300;
@@ -456,7 +461,7 @@ class ConnectedClient extends Thread {
                 carbIntake, carbRec,
                 proIntake, proRec,
                 fatIntake, fatRec,
-                foodRecommend, workoutRecommend);
+                foodRecommend, workoutRecommend); */
 
         String rmsg = mb.feedbackRes(id, fr);
         sendMSG(MessageType.FEEDBACK_RES, rmsg);
