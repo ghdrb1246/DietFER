@@ -167,6 +167,7 @@ class ConnectedClient extends Thread {
                 break;
 
             case RECORD_REQ:
+                System.out.println("RECORD_REQ");
                 // 기록 조회 메시지 처리
                 processRecordReq(_msg);
                 break;
@@ -292,10 +293,8 @@ class ConnectedClient extends Thread {
 
         Meal m = new Meal(ldt, foodType, foodName, g, 0, 0, 0, 0); 
         // TODO : DB에 음식 산입 결과 구현
-        System.out.println(m.toString());
         boolean ok = true;
         String rmsg = mb.mealAddRes(id, ok ? "OK" : "FAIL");
-        System.out.println("[SERVER SEND] " + rmsg);
         
         sendMSG(MessageType.MEAL_ADD_RES, rmsg);
     }
@@ -372,8 +371,11 @@ class ConnectedClient extends Thread {
 
         // TODO: 임시 샘플 (DB 조회된 값)
         list.add(new RecordData(LocalDateTime.now(), "고구마", "걷기", 72.4));
+        list.add(new RecordData(LocalDateTime.now().plusDays(1), "감자", "달리기", 72.3));
+        list.add(new RecordData(LocalDateTime.now().plusDays(2), "시리얼", "기타", 72.2));
 
         String rmsg = mb.recordRes(id, list);
+        System.out.println(rmsg);
         sendMSG(MessageType.RECORD_RES, rmsg);
     }
 
@@ -402,6 +404,7 @@ class ConnectedClient extends Thread {
         }
 
         String rmsg = mb.progressRes(id, p);
+        // System.out.println(rmsg);
         sendMSG(MessageType.PROGRESS_RES, rmsg);
     }
 
@@ -418,6 +421,8 @@ class ConnectedClient extends Thread {
      *  foodRecommend, ArrayList<String> workoutRecommend) 피그백 객체
      */
     private void processFeedbackReq(String _msg) {
+        // System.out.println(_msg);
+
         String id = mp.findID(_msg);
 
         // TODO: DB에서 음식, 운동, 칼로리, 영양소 요약 데이터 조회

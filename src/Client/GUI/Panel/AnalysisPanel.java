@@ -2,6 +2,9 @@ package Client.GUI.Panel;
 
 import javax.swing.*;
 
+import Client.ClientSender;
+import Client.MessageRouter;
+import Client.GUI.Frame.MainFrame;
 import Common.FeedbackResult;
 import Common.Progress;
 
@@ -14,15 +17,31 @@ public class AnalysisPanel extends JPanel {
     private RecommendationPanel recommendationPanel;
     private NutritionAnalysisPanel nutritionAnalysisPanel;
 
-    // 패널 초기화
-    public AnalysisPanel(String userId) {
-        setLayout(new BorderLayout(10, 10));
+    private MainFrame mainFrame;
+    private String userId;
+    private ClientSender sender;
+    private MessageRouter mr;
 
+    // 패널 초기화
+    public AnalysisPanel(String userId, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
+        this.userId = userId;
+        this.mainFrame = mainFrame;
+        this.sender = sender;
+        this.mr = mr;
+        
+        mr.setFrame(mainFrame);
+        
+        setLayout(new BorderLayout(10, 10));
+        dailySummaryPanel = new DailySummaryPanel();
+        weightAchievementPanel = new WeightAchievementPanel();
+        recommendationPanel = new RecommendationPanel();
+        nutritionAnalysisPanel = new NutritionAnalysisPanel();
+        
         // 상단 패널 
         // 일일 요약 + 체중 달성률
         JPanel topPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-        topPanel.add(new DailySummaryPanel());
-        topPanel.add(new WeightAchievementPanel());
+        topPanel.add(dailySummaryPanel);
+        topPanel.add(weightAchievementPanel);
 
         // 상단 높이를 작게 변경
         topPanel.setPreferredSize(new Dimension(0, 60));
@@ -30,22 +49,34 @@ public class AnalysisPanel extends JPanel {
         // 하단패널 
         // 추천 + 영양 분석
         JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-        bottomPanel.add(new RecommendationPanel());
-        bottomPanel.add(new NutritionAnalysisPanel());
+        bottomPanel.add(recommendationPanel);
+        bottomPanel.add(nutritionAnalysisPanel);
 
         // 두 패널 배치
         add(topPanel, BorderLayout.NORTH);
         add(bottomPanel, BorderLayout.CENTER);
     }
 
-    public void handleFeedbackRes(String userId, FeedbackResult fr) {
+    /* public void handleFeedbackRes(String userId, FeedbackResult fr) {
         dailySummaryPanel.handleDailySummary(fr);
         recommendationPanel.handleRecommendation(fr);
         nutritionAnalysisPanel.handleFeedback(userId, fr);
     }
     
     public void handleProgressRes(String userId, Progress p) {
+        System.out.println("handleProgressRes");
         weightAchievementPanel.handleProgress(userId, p);
+    } */
+
+    public void updateFeedback(FeedbackResult fr) {
+        dailySummaryPanel.update(fr);
+        recommendationPanel.update(fr);
+        nutritionAnalysisPanel.update(fr);
+    }
+
+    public void updateProgress(Progress p) {
+        System.out.println("updateProgress");
+        weightAchievementPanel.update(p);
     }
 }
 
@@ -69,13 +100,19 @@ class DailySummaryPanel extends JPanel {
         add(lblRecommended);
     }
 
-    public void updateSummary(int intake, int burn, int recommended) {
-        lblIntake.setText("섭취: " + intake + " kcal");
-        lblBurn.setText("소모: " + burn + " kcal");
-        lblRecommended.setText("권장: " + recommended + " kcal");
-        lblRemain.setText("잔여: " + (recommended - intake + burn) + " kcal");
+    public void update(FeedbackResult fr) {
+        SwingUtilities.invokeLater(() -> {
+            int intake = fr.getIntake();
+            int burn = fr.getBurn();
+            int recommended = fr.getRecommendCal();
+
+            lblIntake.setText("섭취: " + intake + " kcal");
+            lblBurn.setText("소모: " + burn + " kcal");
+            lblRecommended.setText("권장: " + recommended + " kcal");
+            lblRemain.setText("잔여: " + (recommended - intake + burn) + " kcal");
+        });
     }
-    
+    /* 
     public void handleDailySummary(FeedbackResult fr) {
         if (!fr.getSuccess()) {
             lblIntake.setText("-");
@@ -84,54 +121,68 @@ class DailySummaryPanel extends JPanel {
             lblRecommended.setText("-");
             return;
         }
-        updateSummary(fr.getIntake(), fr.getBurn(), fr.getRecommendCal());
+        // update(fr.getIntake(), fr.getBurn(), fr.getRecommendCal());
         // lblIntake.setText("섭취 : " + fr.getIntake() + " kcal");
         // lblBurn.setText("소모 : " + fr.getBurn() + " kcal");
         // lblRemain.setText("잔여 : " + fr.getRemain() + " kcal");
         // lblRecommended.setText("권장 : " + fr.getRecommendCal() + " kcal");
-    }
+    } */
 }
 
 // 체중 달성률 패널
 // ProgressBar (0~100%) 옆에는 초기, 목표, 중앙에는 현재 표시
 class WeightAchievementPanel extends JPanel {
-
+    
     private JProgressBar bar;
     private JLabel lblInfo;
 
     public WeightAchievementPanel() {
+        // System.out.println("WeightAchievementPanel created @" + System.identityHashCode(this));
+
         setBorder(BorderFactory.createTitledBorder("체중 달성률"));
         setLayout(new BorderLayout());
 
         bar = new JProgressBar(0, 100);
         bar.setStringPainted(true);
-
+        bar.setString("0%");
         lblInfo = new JLabel("초기: 0kg / 현재: 0kg / 목표: 0kg", SwingConstants.CENTER);
 
         add(lblInfo, BorderLayout.NORTH);
         add(bar, BorderLayout.CENTER);
     }
 
-    public void updateWeight(double start, double current, double goal) {
-        lblInfo.setText("초기: " + start + "kg / 현재: " + current + "kg / 목표: " + goal + "kg");
+    public void update(Progress p) {
+        // System.out.println("update @" + System.identityHashCode(this));
 
-        double rate = ((start - current) / (start - goal)) * 100;
-        rate = Math.max(0, Math.min(100, rate));
+        // Swing은 스레드에서만 UI 갱신해야 한다.
+        SwingUtilities.invokeLater(() -> {
+            double start = p.getInitial(); // 초기
+            double goal = p.getGoal(); // 목표
+            double current = p.getCurrent(); // 현재
 
-        bar.setValue((int) rate);
-        bar.setString("달성률: " + (int) rate + "%");
+            lblInfo.setText("초기: " + start + "kg / 현재: " + current + "kg / 목표: " + goal + "kg");
+
+            double rate = ((start - current) / (start - goal)) * 100;
+            rate = Math.max(0, Math.min(100, rate));
+
+            bar.setValue((int) rate);
+            bar.setString((int) rate + "%");
+
+            // 디버깅용
+            System.out.println("Progress UI updated: " + rate + "%");
+        });
     }
-
+/* 
     public void handleProgress(String userId, Progress p) {
         // 체중 달성률 UI 갱신
-        updateWeight(p.getGoal(), p.getInitial(), p.getCurrent());
+        update(p.getGoal(), p.getInitial(), p.getCurrent());
         
         // weightBar.setMinimum((int) p.getGoal()); // 목표(작은 값)
         // weightBar.setMaximum((int) p.getInitial()); // 초기체중
         // weightBar.setValue((int) p.getCurrent()); // 현재 체중
 
         repaint();
-    }
+    } */
 }
 
 // 식단/운동 추천 패널
@@ -150,13 +201,33 @@ class RecommendationPanel extends JPanel {
         add(new JScrollPane(txtArea), BorderLayout.CENTER);
     }
 
-    public void updateRecommendation(String text) {
-        txtArea.setText(text);
-    }
+    public void update(FeedbackResult fr) {
+        SwingUtilities.invokeLater(() -> {
+            if (!fr.getSuccess()) {
+                txtArea.setText("추천 없음");
+                return;
+            }
 
+            // 음식 추천
+            StringBuilder foodSb = new StringBuilder();
+            for (String food : fr.getFoodRecommend()) {
+                foodSb.append("- ").append(food).append("\n");
+            }
+            txtArea.setText(foodSb.toString());
+            // foodArea.setText(foodSb.toString());
+
+            // 운동 추천
+            StringBuilder workoutSb = new StringBuilder();
+            for (String workout : fr.getWorkoutRecommend()) {
+                workoutSb.append("- ").append(workout).append("\n");
+            }
+            txtArea.setText(foodSb.toString());
+        });
+    }
+/* 
     public void handleRecommendation(FeedbackResult fr) {
         if (!fr.getSuccess()) {
-            updateRecommendation("추천 없음");
+            update("추천 없음");
             return;
         }
 
@@ -165,7 +236,7 @@ class RecommendationPanel extends JPanel {
         for (String food : fr.getFoodRecommend()) {
             foodSb.append("- ").append(food).append("\n");
         }
-        updateRecommendation(foodSb.toString());
+        update(foodSb.toString());
         // foodArea.setText(foodSb.toString());
 
         // 운동 추천
@@ -173,9 +244,9 @@ class RecommendationPanel extends JPanel {
         for (String workout : fr.getWorkoutRecommend()) {
             workoutSb.append("- ").append(workout).append("\n");
         }
-        updateRecommendation(foodSb.toString());
+        update(foodSb.toString());
         // workoutArea.setText(workoutSb.toString());
-    }
+    } */
 }
 
 // 분석 내용
@@ -232,39 +303,54 @@ class NutritionAnalysisPanel extends JPanel {
         add(new JScrollPane(txtFeedback));
     }
 
-    public void updateNutrition(int c, int cRec, int p, int pRec, int f, int fRec) {
-        // 게이지 반영 %
-        barCarbs.setValue((int) ((double) c / cRec * 100));
-        barProtein.setValue((int) ((double) p / pRec * 100));
-        barFat.setValue((int) ((double) f / fRec * 100));
+    public void update(FeedbackResult fr) {
+        SwingUtilities.invokeLater(() -> {
+            int c = fr.getCarbIntake();
+            int cRec = fr.getCarbRecommend();
+            int p = fr.getProteinIntake();
+            int pRec = fr.getProteinRecommend();
+            int f = fr.getFatIntake();
+            int fRec = fr.getFatRecommend();
+            
+            // 게이지 반영 %
+            barCarbs.setValue((int) ((double) c / cRec * 100));
+            barProtein.setValue((int) ((double) p / pRec * 100));
+            barFat.setValue((int) ((double) f / fRec * 100));
 
-        lblCarbsInfo.setText("탄수화물: " + c + " / " + cRec);
-        lblProteinInfo.setText("단백질: " + p + " / " + pRec);
-        lblFatInfo.setText("지방: " + f + " / " + fRec);
+            lblCarbsInfo.setText("탄수화물: " + c + " / " + cRec);
+            lblProteinInfo.setText("단백질: " + p + " / " + pRec);
+            lblFatInfo.setText("지방: " + f + " / " + fRec);
 
-        // 판정
-        StringBuilder fb = new StringBuilder();
-        if (c > cRec * 1.1)
-            fb.append("탄수화물 초과. ");
-        else if (c < cRec * 0.9)
-            fb.append("탄수화물 부족. ");
+            // 판정
+            StringBuilder fb = new StringBuilder();
+            if (c > cRec * 1.1)
+                fb.append("탄수화물 초과. ");
+            else if (c < cRec * 0.9)
+                fb.append("탄수화물 부족. ");
 
-        if (p > pRec * 1.1)
-            fb.append("단백질 초과. ");
-        else if (p < pRec * 0.9)
-            fb.append("단백질 부족. ");
+            if (p > pRec * 1.1)
+                fb.append("단백질 초과. ");
+            else if (p < pRec * 0.9)
+                fb.append("단백질 부족. ");
 
-        if (f > fRec * 1.1)
-            fb.append("지방 초과. ");
-        else if (f < fRec * 0.9)
-            fb.append("지방 부족. ");
+            if (f > fRec * 1.1)
+                fb.append("지방 초과. ");
+            else if (f < fRec * 0.9)
+                fb.append("지방 부족. ");
 
-        if (fb.length() == 0)
-            fb.append("영양 섭취가 균형적입니다.");
+            if (fb.length() == 0)
+                fb.append("영양 섭취가 균형적입니다.");
 
-        txtFeedback.setText(fb.toString());
+            // txtFeedback.setText(fb.toString());
+            // 추천 식단/운동 갱신
+            txtFeedback.setText(String.join("\n", fr.getFoodRecommend()));
+            txtFeedback.setText(String.join("\n", fr.getWorkoutRecommend()));
+
+            // 영양소 게이지는 패널 구성에 따라 별도 적용
+            repaint();
+        });
     }
-
+/* 
     public void handleFeedback(String userId, FeedbackResult fr) {
 
         if (!fr.getSuccess()) {
@@ -285,5 +371,5 @@ class NutritionAnalysisPanel extends JPanel {
 
         // 3. 영양소 게이지는 패널 구성에 따라 별도 적용
         repaint();
-    }
+    } */
 }

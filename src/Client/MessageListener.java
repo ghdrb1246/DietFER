@@ -104,7 +104,6 @@ class MessageListener extends Thread {
 
             case MEAL_ADD_RES :
                 // 식단 추가 메시지 처리
-                System.out.println("> MEAL_ADD_RES");
                 processMealRes(_msg);
                 break;
             case WORKOUT_ADD_RES :
@@ -124,6 +123,7 @@ class MessageListener extends Thread {
             
             case PROGRESS_RES :
                 // 달성률 메시지 처리
+                System.out.println("> 1. PROGRESS_RES");
                 processProgressRes(_msg);
                 break;
             
@@ -192,8 +192,6 @@ class MessageListener extends Thread {
      * MEAL_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”)
      */
     public void processMealRes(String msg) {
-        System.out.println("[CLIENT RECV RAW] " + msg);
-        
         // id 추출
         String id = mp.findID(msg);
         // 처리 결과 추출
@@ -278,7 +276,6 @@ class MessageListener extends Thread {
         }
 
         Progress p = new Progress(startWeight, goalWeight, currentWeight, achievementRate);
-        
         // 메뉴 콜백 인테페이스 호출
         mc.onProgressRes(id, p);
     }
@@ -293,10 +290,10 @@ class MessageListener extends Thread {
         // id 추출
         String id = mp.findID(msg);
         FeedbackResult fr = null;
+
         if (!(mp.isFail(msg))) {
             fr = mp.findFeedback(msg);
         }
-
         mc.onFeedbackRes(id, fr);
     }
 }

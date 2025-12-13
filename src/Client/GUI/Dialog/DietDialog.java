@@ -80,13 +80,7 @@ public class DietDialog extends JDialog {
             Double gram = Double.parseDouble(txtGram.getText());
 
             Meal m = new Meal(datetime, food, mealType, gram, 0, 0, 0, 0);
-           /*  panel.addRow(new Object[] {
-                    type,
-                    datetime,
-                    food,
-                    mealType,
-                    gram + " g"
-            }); */
+
             sender.sendMSG(MessageType.MEAL_ADD_REQ, mb.mealAddReq(userId, m));
             dispose();
         });
@@ -101,7 +95,10 @@ public class DietDialog extends JDialog {
     public void handleMealAddRes(String userId, String result) {
         if (result.equals("OK")) {
             JOptionPane.showMessageDialog(this, "식단 저장 완료");
-            
+
+            // 입력 후 분석 패널 업데이트 재요청 허용
+            mainFrame.onDataInputCompleted();
+            sender.sendMSG(MessageType.RECORD_REQ, mb.recordReq(userId));
             dispose();
         } 
         else {

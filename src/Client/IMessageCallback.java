@@ -14,16 +14,6 @@ import Common.RecordData;
  */
 public interface IMessageCallback {
     /**
-     * 프로그램 종료 승인 처리
-    */
-    public void onTerminateProgramOk();
-
-    /**
-     * 프로그램 종료 거부 처리
-     */
-    public void onTerminateProgramFail();
-
-    /**
      * 로그인 결과 처리 후 보낸 OK, FAIL 결과를 표시
      * 
      * @param _id  사용자 id
@@ -44,13 +34,10 @@ public interface IMessageCallback {
      * @param id
      * @param result
      */
-    public void onUserUpdateRes(String id, String result);
+    // public void onUserUpdateRes(String id, String result);
 
     // 로그아웃
     public void onLogoutRes(String result);
-
-    // 화원 탈퇴
-    public void onUserDeleteRes(String userId, String result);
 
     // 식단 입력
     public void onMealAddRes(String userId, String result);
@@ -71,7 +58,7 @@ public interface IMessageCallback {
     public void onFeedbackRes(String userId, FeedbackResult fr);
     
     // 메시지
-    public void onNormalMessageRes(String result);
+    // public void onNormalMessageRes(String result);
 
     /**
      * 메시지 처리 에러 출력

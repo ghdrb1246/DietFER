@@ -89,13 +89,10 @@ public class WorkoutDialog extends JDialog {
         if (result.equals("OK")) {
             JOptionPane.showMessageDialog(this, "운동 저장 완료");
 
-            // 테이블 갱신
-            // mainFrame.getInputPanel().refreshWorkoutTable();
+            // 입력 후 분석 패널 업데이트 재요청 허용
+            mainFrame.onDataInputCompleted();
 
-            // 분석 패널 업데이트
-            // mainFrame.requestProgress();
-            // mainFrame.requestFeedback();
-
+            sender.sendMSG(MessageType.RECORD_REQ, mb.recordReq(userId));
             dispose();
         } else {
             JOptionPane.showMessageDialog(this, "운동 저장 실패");

@@ -59,18 +59,10 @@ public class WeightDialog extends JDialog {
             TimeConversion tc = new TimeConversion();
             LocalDateTime datetime = tc.inputToTimeString(txtDateTime.getText());
             Double weight = Double.parseDouble(txtWeight.getText());
-            // System.out.println(datetime);
 
             Weight w = new Weight(datetime, weight);
             System.out.println(w.getDate() + ", " + w.getWeight());
-            /* panel.addRow(new Object[] {
-                    type,
-                    datetime,
-                    "체중",
-                    "",
-                    weight + " kg"
-            }); */
-            // System.out.println(mb.weightAddReq(userId, w));
+
             sender.sendMSG(MessageType.WEIGHT_ADD_REQ, mb.weightAddReq(userId, w));
             dispose();
         });
@@ -85,15 +77,13 @@ public class WeightDialog extends JDialog {
         if (result.equals("OK")) {
             JOptionPane.showMessageDialog(this, "체중 저장 완료");
 
-            // 테이블 갱신
-            // mainFrame.getInputPanel().refreshWorkoutTable();
+            // 입력 후 분석 패널 업데이트 재요청 허용
+            mainFrame.onDataInputCompleted();
 
-            // 분석 패널 업데이트
-            // mainFrame.requestProgress();
-            // mainFrame.requestFeedback();
-
+            sender.sendMSG(MessageType.RECORD_REQ, mb.recordReq(userId));
             dispose();
-        } else {
+        } 
+        else {
             JOptionPane.showMessageDialog(this, "체중 저장 실패");
         }
     }

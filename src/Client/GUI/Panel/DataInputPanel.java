@@ -10,6 +10,7 @@ import Client.GUI.Dialog.WorkoutDialog;
 import Client.GUI.Dialog.WeightDialog;
 import Client.GUI.Frame.MainFrame;
 import Common.RecordData;
+import Common.TimeConversion;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -27,6 +28,9 @@ public class DataInputPanel extends JPanel {
         this.mainFrame = mainFrame;
         this.sender = sender;
         this.mr = mr;
+        
+        mr.setPanel(this);
+
         setLayout(new BorderLayout());
 
         // 상단 버튼 영역
@@ -68,6 +72,7 @@ public class DataInputPanel extends JPanel {
     }
 
     public void handleRecordRes(String userId, ArrayList<RecordData> list) {
+        TimeConversion tc = new TimeConversion();
         // 기존 테이블 초기화
         tableModel.setRowCount(0);
         //  "타입", "날짜/시간", "이름", "추가정보", "수치" 
@@ -76,7 +81,7 @@ public class DataInputPanel extends JPanel {
             if (r.getMealName() != null) {
                 tableModel.addRow(new Object[]{
                     "식단", 
-                    r.getDate(), 
+                    tc.timeToStr(r.getDate()), 
                     r.getMealName(), 
                     r.getMealType(r.getDate().toLocalTime()), 
                     ""           
@@ -87,7 +92,7 @@ public class DataInputPanel extends JPanel {
             if (r.getWorkoutName() != null) {
                 tableModel.addRow(new Object[] {
                     "운동", 
-                    r.getDate(), 
+                    tc.timeToStr(r.getDate()),
                     r.getWorkoutName(), 
                     "", 
                     ""
@@ -98,8 +103,8 @@ public class DataInputPanel extends JPanel {
             if (r.getWeight() != null) {
                 tableModel.addRow(new Object[] {
                     "체중", 
-                    r.getDate(), 
-                    "", 
+                        tc.timeToStr(r.getDate()),
+                            "", 
                     "", 
                     r.getWeight()
                 });

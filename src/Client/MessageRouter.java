@@ -44,6 +44,11 @@ public class MessageRouter implements IMessageCallback {
         this.weightDialog = wed;
         System.out.println("weightDialog set");
     }
+    // 입력 데이터 테이블에 업데이트
+    public void setPanel(DataInputPanel dip) {
+        this.dataInputPanel = dip;
+        System.out.println("dataInputPanel set");
+    }
     // 다이어트 분석
     public void setPanel(AnalysisPanel ap) {
         this.analysisPanel = ap;
@@ -54,17 +59,7 @@ public class MessageRouter implements IMessageCallback {
         this.mainFrame = mf;
     }
 
-    /**
-     * 프로그램 종료 승인 처리
-     */
-    @Override
-    public void onTerminateProgramOk() {}
 
-    /**
-     * 프로그램 종료 거부 처리
-     */
-    @Override
-    public void onTerminateProgramFail() {}
 
     // 로그인
     @Override
@@ -80,22 +75,19 @@ public class MessageRouter implements IMessageCallback {
         else System.out.println("registerDialog이 Null임");
     }
     
-    /**
-     * 회원 정보 수정 결과 처리 후 보낸 OK, FAIL 결과를 표시
-     * 
-     * @param id
-     * @param result
-     */
-    @Override
-    public void onUserUpdateRes(String id, String result) {}
+
+    // 회원 정보 수정 결과 처리 후 보낸 OK, FAIL 결과를 표시
+    
+    // @Override
+    // public void onUserUpdateRes(String id, String result) {}
 
     // 로그아웃
     @Override
     public void onLogoutRes(String result) { }
 
     // 화원 탈퇴
-    @Override
-    public void onUserDeleteRes(String id, String result) {}
+    // @Override
+    // public void onUserDeleteRes(String id, String result) {}
 
     // 식단 입력
     @Override
@@ -133,11 +125,14 @@ public class MessageRouter implements IMessageCallback {
             System.out.println("weightDialog Null임");
     }
 
-    // 진행률
+/*     // 진행률
     @Override
     public void onProgressRes(String id, Progress p) {
-        if (analysisPanel != null)
+        System.out.println("onProgressRes");
+        if (analysisPanel != null) {
+            System.out.println(p.getInitial());
             analysisPanel.handleProgressRes(id, p);
+        }
         else
             System.out.println("analysisPanel Null임");
     }
@@ -145,15 +140,77 @@ public class MessageRouter implements IMessageCallback {
     // 피드백
     @Override
     public void onFeedbackRes(String id, FeedbackResult fr) {
-        if (analysisPanel != null)
+        if (analysisPanel != null) {
             analysisPanel.handleFeedbackRes(id, fr);
-        else
+            System.out.println("onFeedbackRes" + id);
+        }
+        else 
             System.out.println("weightDialog Null임");
-    }
+    } */
 
     // 메시지
+    // @Override
+    // public void onNormalMessageRes(String result) { }
+/* 
+    // 로그인
     @Override
-    public void onNormalMessageRes(String result) { }
+    public void onLoginRes(String userId, String result) {
+        if (mainFrame != null)
+            mainFrame.handleLoginRes(userId, result);
+    }
+    
+    // 회원가입
+    @Override
+    public void onSignupRes(String userId, String result) {
+        if (mainFrame != null)
+            mainFrame.handleSignupRes(userId, result);
+    }
+
+    // 로그아웃 x
+    @Override
+    public void onLogoutRes(String result) { }
+
+    // 음식 
+    @Override
+    public void onMealAddRes(String userId, String result) {
+        if (mainFrame != null)
+            mainFrame.handleMealAddRes(userId, result);
+    }
+
+    // 운동
+    @Override
+    public void onWorkoutAddRes(String userId, String result) {
+        if (mainFrame != null)
+            mainFrame.handleWorkoutAddRes(userId, result);
+    }
+
+    // 체중
+    @Override
+    public void onWeightAddRes(String userId, String result) {
+        if (mainFrame != null)
+            mainFrame.handleWeightAddRes(userId, result);
+    }
+
+    // 기록
+    @Override
+    public void onRecordRes(String userId, ArrayList<RecordData> list) {
+        if (mainFrame != null)
+            mainFrame.handleRecordRes(userId, list);
+    }
+ */
+    // 진행률
+    @Override
+    public void onProgressRes(String userId, Progress p) {
+        if (mainFrame != null) mainFrame.handleProgressRes(userId, p);
+        else System.out.println("onProgressRes NULL임");
+    }
+
+    // 피드백
+    @Override
+    public void onFeedbackRes(String userId, FeedbackResult fr) {
+        if (mainFrame != null)
+            mainFrame.handleFeedbackRes(userId, fr);
+    }
 
     /**
      * 메시지 처리 에러 출력
@@ -161,12 +218,14 @@ public class MessageRouter implements IMessageCallback {
      * @param _msg 예러 출력 메시지
      * @param _e   예외
      */
-    public void onMessageError(String _msg, Exception _e) {}
+    public void onMessageError(String _msg, Exception _e) {
+    }
 
     /**
      * 메시지 처리 출력
      * 
      * @param _msg 출력 메시지
      */
-    public void onMessage(String _msg) {}
+    public void onMessage(String _msg) {
+    }
 }
