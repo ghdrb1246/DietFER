@@ -51,7 +51,7 @@ public class Client {
 
             msgListener = new MessageListener(socket, mr);
 
-            mr.setEntryDialog(dialog);
+            mr.setDialog(dialog);
             // mr.setRegisterDialog(ed);
 
             // 메시지 처리 스레드 시작

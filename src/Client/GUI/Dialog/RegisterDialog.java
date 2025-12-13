@@ -4,7 +4,6 @@ import javax.swing.*;
 
 import Client.ClientSender;
 import Client.MessageRouter;
-import Client.GUI.Frame.MainFrame;
 import Common.MessageBuilder;
 import Common.MessageType;
 import Common.User;
@@ -21,7 +20,7 @@ public class RegisterDialog extends JDialog {
         super(owner, "회원가입", true);
         this.sender = sender;
         this.mr = mr;
-        mr.setRegisterDialog(this);
+        mr.setDialog(this);
         
         JLabel lblId = new JLabel("ID");
         JLabel lblPw = new JLabel("PW");

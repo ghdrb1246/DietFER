@@ -32,10 +32,11 @@ public class ClientSender {
      * @param _mt 메시지 타입
      * @param _msg 메시지
      */
-    public void sendMSG(MessageType _mt, String _msg) {
+    public synchronized void sendMSG(MessageType _mt, String _msg) {
         try {
             // 메시지 전송
             dataOutStream.writeUTF(_msg);
+            // dataOutStream.flush();
         }
         catch (IOException e) {
             System.err.println("[Error] 메시지 전송 실패 : " + _mt.getType());

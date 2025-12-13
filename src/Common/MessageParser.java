@@ -1,7 +1,7 @@
 package Common;
 
 import java.util.StringTokenizer;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 /**
@@ -160,7 +160,7 @@ public class MessageParser {
             int idx2 = block.indexOf(")");
 
             String dateStr = block.substring(0, idx1);    // "2025-12-01"
-            LocalDate date = LocalDate.parse(dateStr);
+            LocalDateTime date = LocalDateTime.parse(dateStr);
 
             String inside = block.substring(idx1 + 1, idx2);  // "밥,걷기,72"
 

@@ -41,14 +41,6 @@ public class MainFrame extends JFrame {
         // setLocationRelativeTo(null);
     }
 
-    public DataInputPanel getInputPanel() {
-        return dataInputPanel;
-    }
-
-    public AnalysisPanel getAnalysisPanel() {
-        return analysisPanel;
-    }
-
     /** 메뉴바 생성 메소드 */
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
@@ -63,6 +55,7 @@ public class MainFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "회원 정보 수정 클릭됨");
             // TODO: EditDialog 연결 예정
             // TODO : DB에서 사용자 정보 수정
+            // 현구 x
         });
 
         // 로그아웃 아이템 이벤트
@@ -78,7 +71,7 @@ public class MainFrame extends JFrame {
 
                 JOptionPane.showMessageDialog(this, "로그아웃 완료");
                 dispose(); // 메인 프레임 닫기
-
+                // 로그아웃 -> 종료
                 // 다시 EntryDialog 열기
                 // EntryDialog entry = new EntryDialog(null, sender, mr);
                 // entry.setVisible(true);
@@ -119,7 +112,8 @@ public class MainFrame extends JFrame {
         JTabbedPane tabs = new JTabbedPane();
 
         analysisPanel = new AnalysisPanel(userId);
-        dataInputPanel = new DataInputPanel();
+        // analysisPanel = new AnalysisPanel(userId, this, sender, mr);
+        dataInputPanel = new DataInputPanel(userId, this, sender, mr);
 
         tabs.addTab("다이어트 분석", analysisPanel);
         tabs.addTab("데이터 입력", dataInputPanel);

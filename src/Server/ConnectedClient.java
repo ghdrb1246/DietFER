@@ -2,7 +2,6 @@ package Server;
 
 import java.io.*;
 import java.net.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -66,6 +65,7 @@ class ConnectedClient extends Thread {
         }
         catch (IOException e) {
             normalMessageOutput(this.socket.toString() + ": 연결해제됨");
+            e.printStackTrace();
         }
 
         // finally 블록은 예외가 발생하든 안 하든 반드시 실행
@@ -135,11 +135,6 @@ class ConnectedClient extends Thread {
      */
     private void msgBasedService(MessageType _type, String _msg) {
         switch (_type) {
-            case EXIT_REQ:
-                // 종료 메시지 처리
-                
-                break;
-
             case SIGNUP_REQ:
                 // 회원 가입 메시지 처리
                 processSignupReq(_msg);
@@ -148,18 +143,14 @@ class ConnectedClient extends Thread {
             case LOGIN_REQ:
                 processLoginReq(_msg);
                 break;
-            case USER_UPDATE_REQ:
+/*             case USER_UPDATE_REQ:
                 // 회원 정보 수정 메시지 처리
                 System.out.println("보류");
                 break;
-
+ */
             case LOGOUT_REQ:
                 // 로그아웃 메시지 처리
                 processLogoutReq(_msg);
-                break;
-            case USER_DELETE_REQ:
-                // 회원 탈퇴 메시지 처리
-                System.out.println("보류");
                 break;
             case MEAL_ADD_REQ:
                 // 식단 추가 메시지 처리
@@ -219,23 +210,6 @@ class ConnectedClient extends Thread {
     }
 
     /**
-     * 프로그램 종료 여부를 판단하는 메소드
-     * 
-     * @param _msg 처리할 메지시
-     */
-    private void processExitReq(String _msg) {
-        // 메시지에서 ID 추출
-        String id = mp.findID(_msg);
-        // 종료 조건
-        boolean ok = !(id.equals("NO_ID")) || id == null ? true : false;
-        // 사용자가 프로그램 종료 허용 여부를 메시지 생성
-        String emsg = mb.exitRes(id, ok ? "OK" : "FAIL");
-        // 생성된 메시지를 전송
-        sendMSG(MessageType.EXIT_RES, emsg);
-        if (ok) normalMessageOutput("클래이언트(" + id + ")가 정성 종료 되었습니다.");
-    }
-
-    /**
      * 사용자가 회원가입 데이터를 파일에서 중복 검사 후 저장 및 처리 결과 메시지 전송하는 메소드
      * 
      * @param _msg 처리할 메지시
@@ -257,13 +231,14 @@ class ConnectedClient extends Thread {
         // 파일에서 ID 중복 검사룰 한다.
         // 파일 -> ID 중복 검사
         boolean ok = true;
-        System.out.println(ok);
+        System.out.println(userData.get(1));
+        System.out.println(u.toString());
         // System.out.println(u.getID() + "ID TESTING...");
-        normalMessageOutput(u.getID() + "ID TESTING...");
+        // normalMessageOutput(u.getID() + "ID TESTING...");
         // 회원가입 처리 결과 메시지 생성
-        String rmsg = mb.signupRes(userData.get(1), ok ? "OK" : "FAIL");
+        // String rmsg = mb.signupRes(userData.get(1), ok ? "OK" : "FAIL");
         // 생성된 메시지 전송
-        sendMSG(MessageType.SIGNUP_RES, rmsg);
+        // sendMSG(MessageType.SIGNUP_RES, rmsg);
     }
 
     // 로그인
@@ -310,14 +285,18 @@ class ConnectedClient extends Thread {
         // MEAL_ADD_REQ/사용자 ID/날짜+시간/음식 타입/음식명/섭취량
         TimeConversion tc = new TimeConversion();
         LocalDateTime ldt = tc.strToTime(mp.getToken(_msg, 2));
+        
         String foodType = mp.getToken(_msg,3);
         String foodName = mp.getToken(_msg,4);
-        Double g = Double.parseDouble(mp.getToken(_msg,5));
+        Double g = Double.parseDouble(mp.getToken(_msg, 5));
 
-        Meal m = new Meal(id, ldt, foodType, foodName, g, 0, 0, 0, 0); 
+        Meal m = new Meal(ldt, foodType, foodName, g, 0, 0, 0, 0); 
         // TODO : DB에 음식 산입 결과 구현
+        System.out.println(m.toString());
         boolean ok = true;
         String rmsg = mb.mealAddRes(id, ok ? "OK" : "FAIL");
+        System.out.println("[SERVER SEND] " + rmsg);
+        
         sendMSG(MessageType.MEAL_ADD_RES, rmsg);
     }
 
@@ -332,7 +311,7 @@ class ConnectedClient extends Thread {
         // ArrayList<String> tokens = mp.messageTokens(_msg);
         TimeConversion tc = new TimeConversion();
 
-        String id = mp.getToken(_msg, 1);
+        String id = mp.findID(_msg);
         LocalDateTime datetime = tc.strToTime(mp.getToken(_msg, 2));
         String workoutName = mp.getToken(_msg, 3);
         double minutes = Double.parseDouble(mp.getToken(_msg, 4));
@@ -345,7 +324,7 @@ class ConnectedClient extends Thread {
 
         // 응답 메시지 생성
         String rmsg = mb.workoutAddRes(id, ok ? "OK" : "FAIL");
-
+        System.out.println(w.toString());
         // 클라이언트로 전송
         sendMSG(MessageType.WORKOUT_ADD_RES, rmsg);
     }
@@ -359,15 +338,14 @@ class ConnectedClient extends Thread {
      */
     private void processWeightAddReq(String _msg) {
         String id = mp.findID(_msg);
-        LocalDate date = LocalDate.parse(mp.getToken(_msg, 2));
+        LocalDateTime date = new TimeConversion().inputToTimeString(mp.getToken(_msg, 2));
         double weight = Double.parseDouble(mp.getToken(_msg, 3));
-
         Weight w = new Weight(date, weight);
 
         // TODO: DB에 체중 저장
         boolean ok = true;
 
-        String rmsg = mb.weightAddRes(ok ? "OK" : "FAIL");
+        String rmsg = mb.weightAddRes(id, ok ? "OK" : "FAIL");
 
         sendMSG(MessageType.WEIGHT_ADD_RES, rmsg);
     }
@@ -393,7 +371,7 @@ class ConnectedClient extends Thread {
         ArrayList<RecordData> list = new ArrayList<>();
 
         // TODO: 임시 샘플 (DB 조회된 값)
-        list.add(new RecordData(LocalDate.now(), "고구마", "걷기", 72.4));
+        list.add(new RecordData(LocalDateTime.now(), "고구마", "걷기", 72.4));
 
         String rmsg = mb.recordRes(id, list);
         sendMSG(MessageType.RECORD_RES, rmsg);
@@ -479,9 +457,6 @@ class ConnectedClient extends Thread {
         sendMSG(MessageType.FEEDBACK_RES, rmsg);
     }
 
-
-
-
     /**
      * 사용자 메시지를 전송 메소드
      * 
@@ -496,10 +471,12 @@ class ConnectedClient extends Thread {
         try {
             // 클라이언트에게 전송
             dataOutStream.writeUTF(_msg);
+            // dataOutStream.flush();
         }
         // 전송 시 예외 처리
         catch (IOException e) {
             failMessageOutput("메시지 전송 실패 : " + _mt.getType());
+            e.printStackTrace();
             // System.err.println("메시지 전송 실패 : " + _mt.getType());
         }
     }

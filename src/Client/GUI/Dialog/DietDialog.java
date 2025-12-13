@@ -2,7 +2,13 @@ package Client.GUI.Dialog;
 
 import javax.swing.*;
 
-import Client.GUI.Panel.DataInputPanel;
+import Client.ClientSender;
+import Client.MessageRouter;
+import Client.GUI.Frame.MainFrame;
+import Common.Meal;
+import Common.MessageBuilder;
+import Common.MessageType;
+import Common.TimeConversion;
 
 import java.awt.*;
 import java.time.LocalDateTime;
@@ -10,14 +16,25 @@ import java.time.format.DateTimeFormatter;
 
 // 식단 입력 Dialog
 public class DietDialog extends JDialog {
+    private MainFrame mainFrame;
+    private ClientSender sender;
+    private MessageRouter mr;
+    private String userId;
     private JTextField txtDateTime;
     private JComboBox<String> cbMealType;
     private JComboBox<String> cbFoodName;
     private JTextField txtGram;
+    private MessageBuilder mb = new MessageBuilder();
 
-    public DietDialog(Window owner, DataInputPanel panel) {
+    public DietDialog(String userId, Window owner, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
         super(owner, "식단 입력", ModalityType.APPLICATION_MODAL);
-
+        this.mainFrame = mainFrame;
+        this.sender = sender;
+        this.mr = mr;
+        this.userId = userId;
+        
+        mr.setDialog(this);
+        
         setLayout(new BorderLayout(10, 10));
 
         // 입력폼 
@@ -55,20 +72,22 @@ public class DietDialog extends JDialog {
 
         // 저장 이벤트 
         btnSave.addActionListener(e -> {
-            String datetime = txtDateTime.getText();
-            String type = "식단";
+            TimeConversion tc = new TimeConversion();
+            LocalDateTime datetime = tc.inputToTimeString(txtDateTime.getText());
+
             String mealType = (String) cbMealType.getSelectedItem();
             String food = (String) cbFoodName.getSelectedItem();
-            String gram = txtGram.getText();
+            Double gram = Double.parseDouble(txtGram.getText());
 
-            panel.addRow(new Object[] {
+            Meal m = new Meal(datetime, food, mealType, gram, 0, 0, 0, 0);
+           /*  panel.addRow(new Object[] {
                     type,
                     datetime,
                     food,
                     mealType,
                     gram + " g"
-            });
-
+            }); */
+            sender.sendMSG(MessageType.MEAL_ADD_REQ, mb.mealAddReq(userId, m));
             dispose();
         });
 
@@ -79,5 +98,14 @@ public class DietDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    
+    public void handleMealAddRes(String userId, String result) {
+        if (result.equals("OK")) {
+            JOptionPane.showMessageDialog(this, "식단 저장 완료");
+            
+            dispose();
+        } 
+        else {
+            JOptionPane.showMessageDialog(this, "식단 저장 실패");
+        }
+    }
 }

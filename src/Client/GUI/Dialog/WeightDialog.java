@@ -2,7 +2,14 @@ package Client.GUI.Dialog;
 
 import javax.swing.*;
 
+import Client.ClientSender;
+import Client.MessageRouter;
+import Client.GUI.Frame.MainFrame;
 import Client.GUI.Panel.DataInputPanel;
+import Common.MessageBuilder;
+import Common.MessageType;
+import Common.TimeConversion;
+import Common.Weight;
 
 import java.awt.*;
 import java.time.LocalDateTime;
@@ -10,11 +17,22 @@ import java.time.format.DateTimeFormatter;
 
 // 체중 입력 Dialog
 public class WeightDialog extends JDialog {
+    private MainFrame mainFrame;
+    private ClientSender sender;
+    private MessageRouter mr;
+    private String userId;
     private JTextField txtDateTime;
     private JTextField txtWeight;
+    private MessageBuilder mb = new MessageBuilder();
 
-    public WeightDialog(Window owner, DataInputPanel panel) {
+    public WeightDialog(String userId, Window owner, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
         super(owner, "체중 입력", ModalityType.APPLICATION_MODAL);
+        this.mainFrame = mainFrame;
+        this.sender = sender;
+        this.mr = mr;
+        this.userId = userId;
+        
+        mr.setDialog(this);
 
         setLayout(new BorderLayout(10, 10));
 
@@ -38,18 +56,22 @@ public class WeightDialog extends JDialog {
         add(btnPanel, BorderLayout.SOUTH);
 
         btnSave.addActionListener(e -> {
-            String type = "체중";
-            String datetime = txtDateTime.getText();
-            String weight = txtWeight.getText();
+            TimeConversion tc = new TimeConversion();
+            LocalDateTime datetime = tc.inputToTimeString(txtDateTime.getText());
+            Double weight = Double.parseDouble(txtWeight.getText());
+            // System.out.println(datetime);
 
-            panel.addRow(new Object[] {
+            Weight w = new Weight(datetime, weight);
+            System.out.println(w.getDate() + ", " + w.getWeight());
+            /* panel.addRow(new Object[] {
                     type,
                     datetime,
                     "체중",
                     "",
                     weight + " kg"
-            });
-
+            }); */
+            // System.out.println(mb.weightAddReq(userId, w));
+            sender.sendMSG(MessageType.WEIGHT_ADD_REQ, mb.weightAddReq(userId, w));
             dispose();
         });
 
@@ -57,5 +79,22 @@ public class WeightDialog extends JDialog {
 
         setSize(320, 180);
         setLocationRelativeTo(owner);
+    }
+
+    public void handleWeightAddRes(String userId, String result) {
+        if (result.equals("OK")) {
+            JOptionPane.showMessageDialog(this, "체중 저장 완료");
+
+            // 테이블 갱신
+            // mainFrame.getInputPanel().refreshWorkoutTable();
+
+            // 분석 패널 업데이트
+            // mainFrame.requestProgress();
+            // mainFrame.requestFeedback();
+
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "체중 저장 실패");
+        }
     }
 }

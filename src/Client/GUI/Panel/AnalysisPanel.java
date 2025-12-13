@@ -1,10 +1,19 @@
 package Client.GUI.Panel;
 
 import javax.swing.*;
+
+import Common.FeedbackResult;
+import Common.Progress;
+
 import java.awt.*;
 
 // 다이어트 분석 패널 클래스
 public class AnalysisPanel extends JPanel {
+    private DailySummaryPanel dailySummaryPanel;
+    private WeightAchievementPanel weightAchievementPanel;
+    private RecommendationPanel recommendationPanel;
+    private NutritionAnalysisPanel nutritionAnalysisPanel;
+
     // 패널 초기화
     public AnalysisPanel(String userId) {
         setLayout(new BorderLayout(10, 10));
@@ -28,12 +37,21 @@ public class AnalysisPanel extends JPanel {
         add(topPanel, BorderLayout.NORTH);
         add(bottomPanel, BorderLayout.CENTER);
     }
+
+    public void handleFeedbackRes(String userId, FeedbackResult fr) {
+        dailySummaryPanel.handleDailySummary(fr);
+        recommendationPanel.handleRecommendation(fr);
+        nutritionAnalysisPanel.handleFeedback(userId, fr);
+    }
+    
+    public void handleProgressRes(String userId, Progress p) {
+        weightAchievementPanel.handleProgress(userId, p);
+    }
 }
 
 // 일일 요약 패널
 // 표시 내용 -> 섭취 kcal, 잔여 kcal, 소모 kcal, 권장 kcal
 class DailySummaryPanel extends JPanel {
-
     private JLabel lblIntake, lblRemain, lblBurn, lblRecommended;
 
     public DailySummaryPanel() {
@@ -56,6 +74,21 @@ class DailySummaryPanel extends JPanel {
         lblBurn.setText("소모: " + burn + " kcal");
         lblRecommended.setText("권장: " + recommended + " kcal");
         lblRemain.setText("잔여: " + (recommended - intake + burn) + " kcal");
+    }
+    
+    public void handleDailySummary(FeedbackResult fr) {
+        if (!fr.getSuccess()) {
+            lblIntake.setText("-");
+            lblBurn.setText("-");
+            lblRemain.setText("-");
+            lblRecommended.setText("-");
+            return;
+        }
+        updateSummary(fr.getIntake(), fr.getBurn(), fr.getRecommendCal());
+        // lblIntake.setText("섭취 : " + fr.getIntake() + " kcal");
+        // lblBurn.setText("소모 : " + fr.getBurn() + " kcal");
+        // lblRemain.setText("잔여 : " + fr.getRemain() + " kcal");
+        // lblRecommended.setText("권장 : " + fr.getRecommendCal() + " kcal");
     }
 }
 
@@ -88,6 +121,17 @@ class WeightAchievementPanel extends JPanel {
         bar.setValue((int) rate);
         bar.setString("달성률: " + (int) rate + "%");
     }
+
+    public void handleProgress(String userId, Progress p) {
+        // 체중 달성률 UI 갱신
+        updateWeight(p.getGoal(), p.getInitial(), p.getCurrent());
+        
+        // weightBar.setMinimum((int) p.getGoal()); // 목표(작은 값)
+        // weightBar.setMaximum((int) p.getInitial()); // 초기체중
+        // weightBar.setValue((int) p.getCurrent()); // 현재 체중
+
+        repaint();
+    }
 }
 
 // 식단/운동 추천 패널
@@ -108,6 +152,29 @@ class RecommendationPanel extends JPanel {
 
     public void updateRecommendation(String text) {
         txtArea.setText(text);
+    }
+
+    public void handleRecommendation(FeedbackResult fr) {
+        if (!fr.getSuccess()) {
+            updateRecommendation("추천 없음");
+            return;
+        }
+
+        // 음식 추천
+        StringBuilder foodSb = new StringBuilder();
+        for (String food : fr.getFoodRecommend()) {
+            foodSb.append("- ").append(food).append("\n");
+        }
+        updateRecommendation(foodSb.toString());
+        // foodArea.setText(foodSb.toString());
+
+        // 운동 추천
+        StringBuilder workoutSb = new StringBuilder();
+        for (String workout : fr.getWorkoutRecommend()) {
+            workoutSb.append("- ").append(workout).append("\n");
+        }
+        updateRecommendation(foodSb.toString());
+        // workoutArea.setText(workoutSb.toString());
     }
 }
 
@@ -196,5 +263,27 @@ class NutritionAnalysisPanel extends JPanel {
             fb.append("영양 섭취가 균형적입니다.");
 
         txtFeedback.setText(fb.toString());
+    }
+
+    public void handleFeedback(String userId, FeedbackResult fr) {
+
+        if (!fr.getSuccess()) {
+            JOptionPane.showMessageDialog(this, "피드백 데이터를 가져올 수 없습니다.");
+            return;
+        }
+        // 칼로리 요약 갱신, 추천 식단/운동 갱신
+        updateNutrition(fr.getCarbIntake(), fr.getCarbRecommend(), fr.getProteinIntake(), fr.getProteinRecommend(), fr.getFatIntake(), fr.getFatRecommend());
+        // 1. 칼로리 요약 갱신
+        // lblIntake.setText(fr.getIntake() + " kcal");
+        // lblBurn.setText(fr.getBurn() + " kcal");
+        // lblRemain.setText(fr.getRemain() + " kcal");
+        // lblRecommend.setText(fr.getRecommendCal() + " kcal");
+
+        // 2. 추천 식단/운동 갱신
+        txtFeedback.setText(String.join("\n", fr.getFoodRecommend()));
+        txtFeedback.setText(String.join("\n", fr.getWorkoutRecommend()));
+
+        // 3. 영양소 게이지는 패널 구성에 따라 별도 적용
+        repaint();
     }
 }

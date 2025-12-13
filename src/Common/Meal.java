@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 
 // 음식 객체
 public class Meal {
-    // 시용자 ID
-    private String id;
     // 등록 날짜+시간
     private LocalDateTime dateTime;
     // 음식 타입
@@ -29,7 +27,6 @@ public class Meal {
     /**
      * 음식 생성자
      * 
-     * @param id            사용자 ID
      * @param dateTime      등록 날짜+시간
      * @param foodTypr      음식 타입
      * @param foodName      음식명
@@ -39,8 +36,7 @@ public class Meal {
      * @param protein       단백질
      * @param province      지방
      */
-    public Meal(String id, LocalDateTime dateTime, String foodName, String foodTypr, double gram, double kcal, double carbohydrate, double protein, double province) {
-        this.id = id;
+    public Meal(LocalDateTime dateTime, String foodName, String foodTypr, double gram, double kcal, double carbohydrate, double protein, double province) {
         this.dateTime = dateTime;
         this.foodTypr = foodTypr;
         this.foodName = foodName;
@@ -50,13 +46,6 @@ public class Meal {
         this.protein = protein;
         this.province = province;
     }
-
-    /**
-     * 사용자 id getter 메소드
-     * 
-     * @return 사용자 id 리턴
-     */
-    public String getId() { return id; }
 
     /**
      * 등록 날짜+시간 getter 메소드
@@ -113,13 +102,6 @@ public class Meal {
      * @return 사용자 지방 리턴
      */
     public double getProvince() { return province; }
-
-    /**
-     * 사용자 ID setter 메소드
-     * 
-     * @param id 수정할 사용자 ID
-     */
-    public void setId(String id) { this.id = id; }
 
     /**
      * 등록 날짜+시간 setter 메소드
@@ -180,8 +162,7 @@ public class Meal {
     @Override
     public String toString() {
         return (
-            "Meal [id=" + id + 
-            ", dateTime=" + dateTime + 
+            "Meal [dateTime=" + dateTime + 
             ", foodTypr=" + foodTypr + 
             ", foodName=" + foodName + 
             ", gram=" + gram + 

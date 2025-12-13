@@ -85,11 +85,6 @@ class MessageListener extends Thread {
 
         // 메시지 타입 판단
         switch (tm) {
-            case EXIT_RES :
-                // 종료 메시지 처리
-                
-                break;
-
             case SIGNUP_RES:
                 // 회원 가입 메시지 처리
                 System.out.println("SIGNUP");
@@ -101,21 +96,15 @@ class MessageListener extends Thread {
                 System.out.println("LOGIN");
                 processLoginRes(_msg);
                 break;
-
+/* 
             case USER_UPDATE_RES :
                 // 회원 정보 수정 메시지 처리
-                
                 break;
-            case LOGOUT_RES :
-                // 로그아웃 메시지 처리
-                
-                break;
-            case USER_DELETE_RES :
-                // 회원 탈퇴 메시지 처리
-                
-                break;
+                */
+
             case MEAL_ADD_RES :
                 // 식단 추가 메시지 처리
+                System.out.println("> MEAL_ADD_RES");
                 processMealRes(_msg);
                 break;
             case WORKOUT_ADD_RES :
@@ -203,10 +192,13 @@ class MessageListener extends Thread {
      * MEAL_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”)
      */
     public void processMealRes(String msg) {
+        System.out.println("[CLIENT RECV RAW] " + msg);
+        
         // id 추출
         String id = mp.findID(msg);
         // 처리 결과 추출
         String res = mp.getToken(msg, 2);
+        
         // 메뉴 콜백 인테페이스 호출
         mc.onMealAddRes(id, res);
     }

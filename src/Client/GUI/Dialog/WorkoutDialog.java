@@ -2,20 +2,38 @@ package Client.GUI.Dialog;
 
 import javax.swing.*;
 
+import Client.ClientSender;
+import Client.MessageRouter;
+import Client.GUI.Frame.MainFrame;
 import Client.GUI.Panel.DataInputPanel;
+import Common.MessageBuilder;
+import Common.MessageType;
+import Common.TimeConversion;
+import Common.Workout;
 
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 // 운동 입력 Dialog
-public class ExerciseDialog extends JDialog {
+public class WorkoutDialog extends JDialog {
+    private MainFrame mainFrame;
+    private ClientSender sender;
+    private MessageRouter mr;
+    private String userId;
     private JTextField txtDateTime;
     private JComboBox<String> cbExercise;
     private JTextField txtHour;
+    private MessageBuilder mb = new MessageBuilder();
 
-    public ExerciseDialog(Window owner, DataInputPanel panel) {
+    public WorkoutDialog(String userId, Window owner, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
         super(owner, "운동 입력", ModalityType.APPLICATION_MODAL);
+        this.mainFrame = mainFrame;
+        this.sender = sender;
+        this.mr = mr;
+        this.userId = userId;
+
+        mr.setDialog(this);
 
         setLayout(new BorderLayout(10, 10));
 
@@ -43,19 +61,21 @@ public class ExerciseDialog extends JDialog {
         add(btnPanel, BorderLayout.SOUTH);
 
         btnSave.addActionListener(e -> {
-            String type = "운동";
-            String datetime = txtDateTime.getText();
+            TimeConversion tc = new TimeConversion();
+            LocalDateTime datetime = tc.inputToTimeString(txtDateTime.getText());
             String exercise = (String) cbExercise.getSelectedItem();
-            String hours = txtHour.getText();
+            Double hours = Double.parseDouble(txtHour.getText());
 
-            panel.addRow(new Object[] {
+            Workout w = new Workout(datetime, exercise, hours, 0);
+
+            /* panel.addRow(new Object[] {
                     type,
                     datetime,
                     exercise,
                     "",
                     hours + " h"
-            });
-
+            }); */
+            sender.sendMSG(MessageType.WORKOUT_ADD_REQ, mb.workoutAddReq(userId, w));
             dispose();
         });
 
@@ -63,5 +83,22 @@ public class ExerciseDialog extends JDialog {
 
         setSize(350, 210);
         setLocationRelativeTo(owner);
+    }
+
+    public void handleWorkoutAddRes(String userId, String result) {
+        if (result.equals("OK")) {
+            JOptionPane.showMessageDialog(this, "운동 저장 완료");
+
+            // 테이블 갱신
+            // mainFrame.getInputPanel().refreshWorkoutTable();
+
+            // 분석 패널 업데이트
+            // mainFrame.requestProgress();
+            // mainFrame.requestFeedback();
+
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "운동 저장 실패");
+        }
     }
 }

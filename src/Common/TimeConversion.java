@@ -5,10 +5,18 @@ import java.time.format.DateTimeFormatter;
 
 // 문자열과 LocalDateTime 변환
 public class TimeConversion {
+    // InputTime conversion
+    public LocalDateTime inputToTimeString(String inputTimeString) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime dateTime = LocalDateTime.parse(inputTimeString, inputFormatter);
+
+        return dateTime;
+    }
+
     /**
      * 문자열 -> LocalDateTime
      * 
-     * @param str 변환할 믄자열
+     * @param str 변환할 자열
      * @return 변한된 LocalDateTime 리턴
      */
     public LocalDateTime strToTime(String dateTimeString) {
@@ -27,7 +35,7 @@ public class TimeConversion {
      */
     public String timeToStr(LocalDateTime dateTime) {
         // LocalDateTime dateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         String formattedDateTime = dateTime.format(formatter);
 
         return formattedDateTime;

@@ -4,7 +4,6 @@ import javax.swing.*;
 
 import Client.ClientSender;
 import Client.MessageRouter;
-import Client.MessageRouter.LoginHandler;
 // import Client.MessageRouter;
 import Client.GUI.Frame.MainFrame;
 import Common.MessageBuilder;
@@ -12,7 +11,7 @@ import Common.MessageType;
 
 import java.awt.*;
 
-public class EntryDialog extends JDialog implements LoginHandler {
+public class EntryDialog extends JDialog {
 
     private JTextField txtId;
     private JPasswordField txtPw;

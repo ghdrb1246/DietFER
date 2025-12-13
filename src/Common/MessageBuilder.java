@@ -26,27 +26,6 @@ public class MessageBuilder {
     // 개별 메시지 전용 편의 함수
 
     /**
-     * 프로그램 종료 요청
-     * 
-     * @param userId 사용자 ID
-     * @return EXIT_REQ/ID
-     */
-    public String exitReq(String userId) {
-        return build(MessageType.EXIT_REQ, userId);
-    }
-
-    /**
-     * 프로그램 종료 처리 결과
-     * 
-     * @param userId 사용자 ID
-     * @param result 처리 결과
-     * @return EXIT_RES/ID/(“OK” or “FAIL”)
-     */
-    public String exitRes(String userId, String result) {
-        return build(MessageType.EXIT_RES, userId, result);
-    }
-
-    /**
      * 회원가입 요청
      * 
      * @param u 사용자 객체
@@ -104,7 +83,7 @@ public class MessageBuilder {
      * @param u
      * @return USER_UPDATE_REQ/성별/키/나이/초기 체중/목표 체중
      */
-    public String userUpdateReq(User u) {
+    /* public String userUpdateReq(User u) {
         return build(
             MessageType.USER_UPDATE_REQ, 
             String.valueOf(u.getSex()), 
@@ -113,7 +92,7 @@ public class MessageBuilder {
             String.valueOf(u.getStartWeight()), 
             String.valueOf(u.getGoalWeight())
         );
-    }
+    } */
 
     /**
      * 회원 정보 수정 처리 결과
@@ -122,9 +101,9 @@ public class MessageBuilder {
      * @param result 처리 결과
      * @return USER_UPDATE_RES/사용자 ID/처리 결과(“OK” or “FAIL”)
      */
-    public String userUpdateRes(String id, String result) {
+    /* public String userUpdateRes(String id, String result) {
         return build(MessageType.USER_UPDATE_RES, id, result);
-    }
+    } */
 
     /**
      * 로그아웃 요청
@@ -137,47 +116,18 @@ public class MessageBuilder {
     }
 
     /**
-     * 로그아웃 처리 결과
-     * 
-     * @param result 처리 결과
-     * @return LOGOUT_RES/처리 결과(“OK” or “FAIL”)
-     */
-    public String logoutRes(String result) {
-        return build(MessageType.LOGOUT_RES, result);
-    }
-
-    /**
-     * 회원 탈퇴 요청
-     * 
-     * @param userId 사용자 ID
-     * @return USER_DELETE_REQ/사용자 ID
-     */
-    public String userDeleteReq(String userId) {
-        return build(MessageType.USER_DELETE_REQ, userId);
-    }
-
-    /**
-     * 회원 탈퇴 처리 결과
-     * 
-     * @param result 처리 결과
-     * @return USER_DELETE_REQ/사용자 ID/처리 결과(“OK” or “FAIL”)
-     */
-    public String userDeleteRes(String userId, String result) {
-        return build(MessageType.USER_DELETE_RES, result);
-    }
-
-    /**
      * 식단 입력 추가 요청
      * 
      * @param m 음식
      * @return MEAL_ADD_REQ/사용자 ID/날짜+시간/음식 타입/음식명/섭취량
      */
-    public String mealAddReq(Meal m) {
+    public String mealAddReq(String userId, Meal m) {
         return build(
             MessageType.MEAL_ADD_REQ, 
-            m.getId(), 
+            userId,
             m.getDateTime().toString(),
             m.getFoodName(), 
+            m.getFoodTypr(),
             String.valueOf(m.getGram())
         );
     }
@@ -190,7 +140,7 @@ public class MessageBuilder {
      * @return MEAL_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”)
      */
     public String mealAddRes(String userId, String result) {
-        return build(MessageType.MEAL_ADD_RES, result);
+        return build(MessageType.MEAL_ADD_RES, userId, result);
     }
 
     /**
@@ -217,7 +167,7 @@ public class MessageBuilder {
      * @return WORKOUT_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”)
      */
     public String workoutAddRes(String userId, String result) {
-        return build(MessageType.WORKOUT_ADD_RES, result);
+        return build(MessageType.WORKOUT_ADD_RES, userId, result);
     }
 
     /**
@@ -227,7 +177,8 @@ public class MessageBuilder {
      * @return WEIGHT_ADD_REQ/사용자 ID/날짜/체중
      */
     public String weightAddReq(String userId, Weight w) {
-        return build(MessageType.WEIGHT_ADD_REQ, userId, w.getDate().toString(), String.valueOf(w.getWeight()));
+        TimeConversion tc = new TimeConversion();
+        return build(MessageType.WEIGHT_ADD_REQ, userId, tc.timeToStr(w.getDate()), String.valueOf(w.getWeight()));
     }
 
     /**
@@ -237,8 +188,8 @@ public class MessageBuilder {
      * @param result 처리 결과
      * @return WEIGHT_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”)
      */
-    public String weightAddRes(String result) {
-        return build(MessageType.WEIGHT_ADD_RES, result);
+    public String weightAddRes(String userId, String result) {
+        return build(MessageType.WEIGHT_ADD_RES, userId, result);
     }
 
     /**
@@ -375,14 +326,5 @@ public class MessageBuilder {
         }
 
         return sb.toString();
-    }
-
-    public String msgReq(String userId, String msg) {
-        return MessageType.MSG_REQ + "/" + userId + "/" + msg;
-        // return build(MessageType.MSG_REQ, userId, msg);
-    }
-
-    public String msgRes(String userId, String result) {
-        return build(MessageType.MSG_RES, userId, result);
     }
 }
