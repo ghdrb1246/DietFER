@@ -1,4 +1,4 @@
-package Server;
+package Server.Service;
 
 import Server.DB.UserDAO;
 import Server.DB.WeightDAO;

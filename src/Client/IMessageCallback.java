@@ -3,6 +3,7 @@ package Client;
 import java.util.ArrayList;
 
 import Common.FeedbackResult;
+import Common.FoodNutrition;
 import Common.Progress;
 import Common.RecordData;
 
@@ -56,6 +57,9 @@ public interface IMessageCallback {
 
     // 피드백
     public void onFeedbackRes(String userId, FeedbackResult fr);
+    
+    // 음식 검색
+    public void onFoodSearchRes(String userId, ArrayList<FoodNutrition> fn);
     
     // 메시지
     // public void onNormalMessageRes(String result);

@@ -119,7 +119,7 @@ public class MessageBuilder {
      * 식단 입력 추가 요청
      * 
      * @param m 음식
-     * @return MEAL_ADD_REQ/사용자 ID/날짜+시간/음식 타입/음식명/섭취량
+     * @return MEAL_ADD_REQ/사용자 ID/날짜+시간/음식 타입/음식명/섭취량/칼로리/탄수회물/단백질/지방
      */
     public String mealAddReq(String userId, Meal m) {
         return build(
@@ -128,7 +128,11 @@ public class MessageBuilder {
             m.getDateTime().toString(),
             m.getFoodName(), 
             m.getFoodTypr(),
-            String.valueOf(m.getGram())
+            String.valueOf(m.getGram()),
+            String.valueOf(m.getKcal()),
+            String.valueOf(m.getCarbohydrate()),
+            String.valueOf(m.getProtein()),
+            String.valueOf(m.getFat())
         );
     }
 
@@ -325,6 +329,38 @@ public class MessageBuilder {
             if (i < workout.size() - 1) sb.append("+");
         }
 
+        return sb.toString();
+    }
+    
+    // 음식 검색 요청
+    public String foodSearcReq(String userId, String foodSear) {
+        return build(MessageType.FOOD_SEARCH_REQ, userId, foodSear);
+    }
+
+    // 음식 검색 처리 결과
+    public String foodSearcRes(String userId, ArrayList<FoodNutrition> fnlList) {
+        if (fnlList.size() < 0) {
+            return MessageType.FOOD_SEARCH_RES + "/" + userId + "/FAIL";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageType.FOOD_SEARCH_RES).append("/");
+        sb.append(userId).append("/");
+
+        for (int i = 0; i < fnlList.size(); i++) {
+            // 리스트 i번째 FoodNutrition 객체
+            FoodNutrition fn = fnlList.get(i);
+
+            // 음식명+칼로리+탄수화물+단백질+지방/.../음식명+칼로리+탄수화물+단백질+지방
+            sb.append(fn.getFoodName()).append("+")
+                .append(fn.getKcal()).append("+")
+                .append(fn.getCarbohydrate()).append("+")
+                .append(fn.getProtein()).append("+")
+                .append(fn.getFat()).append("/");
+        }
+        
+        // 마지막 "/" 제거
+        sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
     }
 }

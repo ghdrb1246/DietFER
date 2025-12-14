@@ -123,13 +123,18 @@ class MessageListener extends Thread {
             
             case PROGRESS_RES :
                 // 달성률 메시지 처리
-                System.out.println("> 1. PROGRESS_RES");
                 processProgressRes(_msg);
                 break;
             
             case FEEDBACK_RES :
+                System.out.println("FEEDBACK_RES");
                 // 피드백 처리
                 processFeedbackRes(_msg);
+                break;
+
+            case FOOD_SEARCH_RES :
+                // 음식 검색 처리
+                processFoodSearchRes(_msg);
                 break;
 
             default :
@@ -295,5 +300,32 @@ class MessageListener extends Thread {
             fr = mp.findFeedback(msg);
         }
         mc.onFeedbackRes(id, fr);
+    }
+
+    public void processFoodSearchRes(String msg) {
+        // id 추출
+        String id = mp.findID(msg);
+        // 메시지 "/"으로 분리
+        ArrayList<String> slist = mp.messageTokens(msg);
+        // 메시지 "+"으로 분리
+        ArrayList<String> plist = new ArrayList<>();
+        // 식품 영양 정보 객체
+        ArrayList<FoodNutrition> fnlist = new ArrayList<>();
+
+        for (String ss : slist) {
+            plist = mp.findTokenUserList(ss);
+
+            if (plist.size() < 5) {
+                // 부족한 경우 해당 항목을 건너뛰기
+                continue;
+            }
+            fnlist.add(new FoodNutrition(
+                    plist.get(0),
+                    Double.parseDouble(plist.get(1)),
+                    Double.parseDouble(plist.get(2)),
+                    Double.parseDouble(plist.get(3)),
+                    Double.parseDouble(plist.get(4))));
+        }
+        mc.onFoodSearchRes(id, fnlist);
     }
 }

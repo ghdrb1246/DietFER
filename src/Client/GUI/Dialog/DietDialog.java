@@ -5,6 +5,7 @@ import javax.swing.*;
 import Client.ClientSender;
 import Client.MessageRouter;
 import Client.GUI.Frame.MainFrame;
+import Common.FoodNutrition;
 import Common.Meal;
 import Common.MessageBuilder;
 import Common.MessageType;
@@ -13,6 +14,7 @@ import Common.TimeConversion;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 // 식단 입력 Dialog
 public class DietDialog extends JDialog {
@@ -21,8 +23,11 @@ public class DietDialog extends JDialog {
     private MessageRouter mr;
     private String userId;
     private JTextField txtDateTime;
-    private JComboBox<String> cbMealType;
-    private JComboBox<String> cbFoodName;
+    // private JComboBox<String> cbMealType;
+    private JTextField txtFoodKeyword;
+    private JButton btnSearch;
+    private JComboBox<FoodNutrition> cbFoodList;
+    // private JComboBox<String> cbFoodList;
     private JTextField txtGram;
     private MessageBuilder mb = new MessageBuilder();
 
@@ -44,15 +49,21 @@ public class DietDialog extends JDialog {
         txtDateTime = new JTextField(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
         form.add(txtDateTime);
 
-        form.add(new JLabel("식단 종류"));
-        // TODO : API에 음식 종류을 구별하여 추가
-        cbMealType = new JComboBox<>(new String[] { "아침", "점심", "저녁", "간식" });
-        form.add(cbMealType);
+        // API에 음식 종류을 구별하여 추가
+        form.add(new JLabel("음식 검색"));
+        txtFoodKeyword = new JTextField();
+        btnSearch = new JButton("조회");
+        
+        JPanel searchPanel = new JPanel(new BorderLayout(5, 0));
+        searchPanel.add(txtFoodKeyword, BorderLayout.CENTER);
+        searchPanel.add(btnSearch, BorderLayout.EAST);
+        form.add(searchPanel);
 
         form.add(new JLabel("식단명"));
-        // TODO : 서버에게 음식 종류으로 API을 요청 - 조회 후 필터 -> 표시
-        cbFoodName = new JComboBox<>(new String[] { "고구마", "닭가슴살", "현미밥", "사과" });
-        form.add(cbFoodName);
+        
+        // 서버에게 음식 종류으로 API을 요청 - 조회 후 필터 -> 표시
+        cbFoodList = new JComboBox<>();
+        form.add(cbFoodList);
 
         form.add(new JLabel("섭취량(g)"));
         txtGram = new JTextField();
@@ -69,18 +80,38 @@ public class DietDialog extends JDialog {
         btnPanel.add(btnCancel);
 
         add(btnPanel, BorderLayout.SOUTH);
+        
+        btnSearch.addActionListener(e -> {
+            String keyword = txtFoodKeyword.getText().trim();
+            if (keyword.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "음식명을 입력하세요.");
+                return;
+            }
+            // FOOD_SEARCH_REQ/사용자 ID/음식 검색어
+            sender.sendMSG(MessageType.FOOD_SEARCH_REQ, mb.foodSearcReq(userId, keyword));
+        });
 
-        // 저장 이벤트 
+
+        // 저장 이벤트
         btnSave.addActionListener(e -> {
-            TimeConversion tc = new TimeConversion();
-            LocalDateTime datetime = tc.inputToTimeString(txtDateTime.getText());
+            FoodNutrition food = (FoodNutrition) cbFoodList.getSelectedItem();
+            if (food == null) {
+                JOptionPane.showMessageDialog(this, "음식을 선택하세요.");
+                return;
+            }
 
-            String mealType = (String) cbMealType.getSelectedItem();
-            String food = (String) cbFoodName.getSelectedItem();
-            Double gram = Double.parseDouble(txtGram.getText());
+            double gram;
+            try {
+                gram = Double.parseDouble(txtGram.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "섭취량을 숫자로 입력하세요.");
+                return;
+            }
 
-            Meal m = new Meal(datetime, food, mealType, gram, 0, 0, 0, 0);
+            LocalDateTime datetime = new TimeConversion().inputToTimeString(txtDateTime.getText());
 
+            Meal m = new Meal(datetime, food.getFoodName(), txtFoodKeyword.getText().trim(), gram, food.getKcal(), food.getCarbohydrate(), food.getProtein(), food.getFat());
+            System.out.println(m.toString());
             sender.sendMSG(MessageType.MEAL_ADD_REQ, mb.mealAddReq(userId, m));
             dispose();
         });
@@ -92,6 +123,7 @@ public class DietDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
+    // 음식 저장 처리 결과
     public void handleMealAddRes(String userId, String result) {
         if (result.equals("OK")) {
             JOptionPane.showMessageDialog(this, "식단 저장 완료");
@@ -104,5 +136,21 @@ public class DietDialog extends JDialog {
         else {
             JOptionPane.showMessageDialog(this, "식단 저장 실패");
         }
+    }
+
+    // 음식 종류 콤보박스 아이템 추가
+    public void handleFoodSearchRes(String userId, ArrayList<FoodNutrition> list) {
+        SwingUtilities.invokeLater(() -> {
+            if (cbFoodList.getItemCount() > 0) cbFoodList.removeAllItems();
+
+            if (list == null || list.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "조회 결과가 없습니다.");
+                return;
+            }
+
+            for (FoodNutrition f : list) {
+                cbFoodList.addItem(f);
+            }
+        });
     }
 }

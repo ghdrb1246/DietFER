@@ -48,12 +48,45 @@ public class WorkoutDialog extends JDialog {
         
         form.add(new JLabel("운동명"));
 
-        ArrayList<Exercise> exercises = new ExerciseCSVDAO().loadExercises();
-        cbExercise = new JComboBox<>();
-
-        for (Exercise e : exercises) {
-            cbExercise.addItem(e.getName());
-        }
+        cbExercise = new JComboBox<>(new String[] {
+            "걷기",
+            "빠르게 걷기",
+            "조깅",
+            "달리기",
+            "런닝머신(걷기)",
+            "런닝머신(달리기)",
+            "자전거타기",
+            "실내자전거타기",
+            "스피닝",
+            "계단오르기",
+            "줄넘기",
+            "파워워킹",
+            "노르딕워킹",
+            "에어로빅(저강도)",
+            "에어로빅(중강도)",
+            "에어로빅(고강도)",
+            "줌바댄스",
+            "다이어트 댄스",
+            "재즈댄스",
+            "방송댄스",
+            "수영(자유영)",
+            "수영(배영)",
+            "수영(평영)",
+            "웨이트운동(가볍게)",
+            "웨이트운동(보통으로)",
+            "웨이트운동(격렬하게)",
+            "스쿼트",
+            "런지",
+            "푸쉬업",
+            "플랭크",
+            "크런치",
+            "레그 프레스",
+            "덤벨 운동",
+            "케틀벨",
+            "하이킹",
+            "등산",
+            "트래킹"
+        });
 
         form.add(cbExercise);
 
@@ -75,7 +108,7 @@ public class WorkoutDialog extends JDialog {
             LocalDateTime datetime = tc.inputToTimeString(txtDateTime.getText());
             String exercise = (String) cbExercise.getSelectedItem();
             Double hours = Double.parseDouble(txtHour.getText());
-            // TODO : kcal 계산 구현
+            // kcal 계산
             Workout w = new Workout(datetime, exercise, hours, 0);
 
             sender.sendMSG(MessageType.WORKOUT_ADD_REQ, mb.workoutAddReq(userId, w));

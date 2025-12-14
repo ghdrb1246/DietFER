@@ -29,3 +29,4 @@ replay_pid*
 *.env
 *.txt
 bin/GUI/Panel/*.class
+/src/Server/DB/DBC.java

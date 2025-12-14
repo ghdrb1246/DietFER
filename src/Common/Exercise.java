@@ -10,11 +10,11 @@ public class Exercise {
         this.kcalPerKg = kcalPerKg;
     }
 
-    public String getName() {
-        return name;
+    public double calcKcal(double weight, double minutes) {
+        return kcalPerKg * weight * (minutes / 60.0);
     }
 
-    public double getKcalPerKg() {
-        return kcalPerKg;
+    public String getName() {
+        return name;
     }
 }

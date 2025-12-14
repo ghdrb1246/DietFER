@@ -22,7 +22,7 @@ package Common;
  * </p>
  * 
  * <p>
- * 6.음식 저장 요청 -> MEAL_ADD_REQ/사용자 ID/날짜+시간/음식 타입/음식명/섭취량
+ * 6.음식 저장 요청 -> MEAL_ADD_REQ/사용자 ID/날짜+시간/음식 타입/음식명/섭취량/칼로리/탄수회물/단백질/지방
  * </p>
  * 
  * <p>
@@ -72,6 +72,14 @@ package Common;
  * 결과(섭취+소모+잔여+권장/탄수화물_섭취량+탄수화물_권장량/단백질_섭취량+단백질_권장량/지방_섭취량+지방_권장량/음식 추천 리스트/운동
  * 추천 리스트 or “FAIL”)
  * </p>
+ * 
+ * <p>
+ * 18.음식 검색 요청 -> FOOD_SEARCH_REQ/사용자 ID/검색어
+ * </p>
+ * 
+ * <p>
+ * 19.음식 검색 처리 -> FOOD_SEARCH_RES/사용자 ID/처리 결과(음식명+칼로리+탄수화물+단백질+지방/…/음식명+칼로리+탄수화물+단백질+지방 or “FAIL”)
+ * </p>
  */
 public enum MessageType {
     // 회원가입
@@ -107,7 +115,11 @@ public enum MessageType {
 
     // 피드백
     FEEDBACK_REQ (15, "FEEDBACK_REQ"),
-    FEEDBACK_RES (16, "FEEDBACK_RES");
+    FEEDBACK_RES (16, "FEEDBACK_RES"),
+
+    // 검색어
+    FOOD_SEARCH_REQ(17, "FOOD_SEARCH_REQ"),
+    FOOD_SEARCH_RES(18, "FOOD_SEARCH_RES");
 
     // 메시지 인덱스
     private int i = 0;

@@ -1,36 +1,42 @@
 package Server.CSV;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import Common.Exercise;
 
 // CSV 파싱
 public class ExerciseCSVDAO {
-    private static final String FILE_PATH = "src/Server/CSV/exercise.csv";
+    private Map<String, Exercise> exerciseMap = new HashMap<>();
 
-    public ArrayList<Exercise> loadExercises() {
-        ArrayList<Exercise> list = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
+    public Map<String, Exercise> loadExercises() {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/Server/CSV/exercise.csv"))) {
             String line;
 
             while ((line = br.readLine()) != null) {
                 StringTokenizer st = new StringTokenizer(line, ",");
 
-                String name = st.nextToken();
-                double kcalPerKg = Double.parseDouble(st.nextToken());
+                String name = st.nextToken().trim();
+                double kcal = Double.parseDouble(st.nextToken().trim());
 
-                list.add(new Exercise(name, kcalPerKg));
+                exerciseMap.put(name, new Exercise(name, kcal));
             }
-
         } 
-        catch (IOException e) {
-            System.err.println("운동 CSV 로딩 실패");
+        catch (Exception e) {
             e.printStackTrace();
         }
 
-        return list;
+        return exerciseMap;
+    }
+
+    public Exercise getExercise(String name) {
+        return loadExercises().get(name);
+    }
+
+    public Set<String> getExerciseNames() {
+        return loadExercises().keySet();
     }
 }

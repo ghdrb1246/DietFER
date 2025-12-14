@@ -61,9 +61,9 @@ public class MainFrame extends JFrame {
         // 회원 정보 수정 아이템 이벤트
         itemEdit.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "회원 정보 수정 클릭됨");
-            // TODO: EditDialog 연결 예정
+            // TODO: EditDialog 연결
             // TODO : DB에서 사용자 정보 수정
-            // 현구 x
+            // 구현 x
         });
 
         // 로그아웃 아이템 이벤트
@@ -94,7 +94,7 @@ public class MainFrame extends JFrame {
                     JOptionPane.YES_NO_OPTION);
 
             if (result == JOptionPane.YES_OPTION) {
-                // TODO : DB에서 사용자 ID으로 삭제
+                // TODO : DB에서 사용자 ID으로 삭제 - 구현 x
 
                 JOptionPane.showMessageDialog(this, "회원탈퇴 완료");
                 dispose();
@@ -198,15 +198,16 @@ public class MainFrame extends JFrame {
 
     // 진행률
     public void handleProgressRes(String userId, Progress p) {
-        System.out.println("handleProgressRes");
         analysisPanel.updateProgress(p);
     }
 
     // 피드백
     public void handleFeedbackRes(String userId, FeedbackResult fr) {
+        System.out.println("handleFeedbackRes");
         analysisPanel.updateFeedback(fr);
     }
 
+    // 진행률, 피드백 요청
     private void requestInitialAnalysisData() {
         new Thread(() -> {
             sender.sendMSG(MessageType.PROGRESS_REQ, mb.progressReq(userId));

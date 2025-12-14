@@ -44,4 +44,12 @@ public class RecordData {
         return "기타";
     }
     
+    @Override
+    public String toString() {
+        return ("RecordData [date = " + date.toString() +
+                ", mealName = " + mealName +
+                ", workoutName = " + workoutName +
+                ", weight = " + weight +
+                "]");
+    }
 }

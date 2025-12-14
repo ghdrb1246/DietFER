@@ -6,6 +6,7 @@ import Client.GUI.Frame.MainFrame;
 import Client.GUI.Panel.AnalysisPanel;
 import Client.GUI.Panel.DataInputPanel;
 import Common.FeedbackResult;
+import Common.FoodNutrition;
 import Common.Progress;
 import Common.RecordData;
 
@@ -210,6 +211,12 @@ public class MessageRouter implements IMessageCallback {
     public void onFeedbackRes(String userId, FeedbackResult fr) {
         if (mainFrame != null)
             mainFrame.handleFeedbackRes(userId, fr);
+    }
+
+    // 음식 검색
+    @Override
+    public void onFoodSearchRes(String userId, ArrayList<FoodNutrition> fn) {
+        if (dietDialog != null) dietDialog.handleFoodSearchRes(userId, fn);
     }
 
     /**

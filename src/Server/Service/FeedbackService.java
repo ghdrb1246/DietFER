@@ -1,4 +1,4 @@
-package Server;
+package Server.Service;
 
 import Server.DB.*;
 import Common.FeedbackResult;
@@ -18,9 +18,8 @@ public class FeedbackService {
     private UserDAO userDAO = new UserDAO();
 
     public FeedbackResult getFeedback(String userId) {
-
         LocalDate today = LocalDate.now();
-
+        
         int intake = mealDAO.getDailyIntakeCal(userId, today);
         int burn = workoutDAO.getDailyBurnCal(userId, today);
         int remain = intake - burn;

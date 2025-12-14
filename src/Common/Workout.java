@@ -18,7 +18,6 @@ public class Workout {
     /**
      * 운동 생성자
      * 
-     * @param id 사용자 ID
      * @param exerciseName 운동 명
      * @param minutes 운동 시간
      * @param kcal 소모 칼로리

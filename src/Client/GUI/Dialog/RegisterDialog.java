@@ -9,7 +9,6 @@ import Common.MessageType;
 import Common.User;
 import java.awt.*;
 
-// TODO : 사용자 정보 DB에 산입, 회원가입 버튼 클릭 시 EntryDialog으로 이동
 public class RegisterDialog extends JDialog {
     private ClientSender sender;
     private MessageBuilder mb = new MessageBuilder();

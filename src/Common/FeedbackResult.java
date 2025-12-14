@@ -168,4 +168,22 @@ public class FeedbackResult {
         this.workoutRecommend = workoutRecommend;
     }
     /* -------------------------------------------------- */
+
+    @Override
+    public String toString() {
+        return ("FeedbackResult [success = " + success +
+            ", intake = " + intake +
+            ", burn = " + burn +
+            ", remain = " + remain +
+            ", recommendCal = " + recommendCal +
+            ", carbIntake = " + carbIntake +
+            ", carbRecommend = " + carbRecommend +
+            ", proteinIntake = " + proteinIntake +
+            ", proteinRecommend = " + proteinRecommend +
+            ", fatIntake = " + fatIntake +
+            ", fatRecommend = " + fatRecommend +
+            ", foodRecommend = " + foodRecommend.toString() +
+            ", workoutRecommend = " + workoutRecommend.toString() +
+            "]");
+    }
 }

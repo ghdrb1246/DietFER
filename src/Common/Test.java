@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import Server.CSV.ExerciseCSVDAO;
+import Server.DB.RecordDAO;
 
 public class Test {
     public static void main(String[] args) {
@@ -26,10 +27,26 @@ public class Test {
         String s = tc.timeToStr(ldt);
         
         System.out.println(s); */
-
+/* 
         ArrayList<Exercise> exercises = new ExerciseCSVDAO().loadExercises();
         for (Exercise e : exercises) {
             System.out.println(e.getName());
+        } */
+        /* ArrayList<FoodNutrition> f = new ArrayList<>();
+        f.add(new FoodNutrition("A", 100, 3.4, 0, 1));
+        f.add(new FoodNutrition("B", 31, 1, 0, 22));
+        f.add(new FoodNutrition("C", 67, 30, 5, 11));
+        f.add(new FoodNutrition("D", 12, 31, 0, 2.1));
+        f.add(new FoodNutrition("F", 64, 3.4, 1, 0.5));
+        MessageBuilder b = new MessageBuilder();
+        System.out.println(b.foodSearcReq("id1", "고구마"));
+        System.out.println(b.foodSearcRes("id1", f));    */
+        
+        ArrayList<RecordData> list = new RecordDAO().findRecordsByUser("id1");
+        
+        for (RecordData rd : list) {
+            System.out.println(rd.toString());
         }
     }
+
 }
