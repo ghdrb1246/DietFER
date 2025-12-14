@@ -14,6 +14,7 @@ import com.google.gson.JsonParser;
 import Common.FoodNutrition;
 
 public class FoodNutritionSystem {
+    // TODO : 인증키 확인
     private static final String SERVICE_KEY = "인증키";
     private static final String API_URL = "https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02/getFoodNtrCpntDbInq02";
 

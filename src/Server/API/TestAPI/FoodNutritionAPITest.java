@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 public class FoodNutritionAPITest {
     public static void main(String[] args) {
         try {
+            // TODO : 인증키 확인
             String serviceKey = "인증키";
 
             // 검색할 음식명 ? 대품류
