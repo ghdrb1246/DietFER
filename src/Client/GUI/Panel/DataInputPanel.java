@@ -6,7 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import Client.ClientSender;
 import Client.MessageRouter;
 import Client.GUI.Dialog.DietDialog;
-import Client.GUI.Dialog.WorkoutDialog;
+import Client.GUI.Dialog.ExerciseDialog;
 import Client.GUI.Dialog.WeightDialog;
 import Client.GUI.Frame.MainFrame;
 import Common.RecordData;
@@ -59,7 +59,7 @@ public class DataInputPanel extends JPanel {
         });
 
         btnExercise.addActionListener(e -> {
-            new WorkoutDialog(userId, SwingUtilities.getWindowAncestor(this), mainFrame, sender, mr).setVisible(true);
+            new ExerciseDialog(userId, SwingUtilities.getWindowAncestor(this), mainFrame, sender, mr).setVisible(true);
         });
 
         btnWeight.addActionListener(e -> {
@@ -89,11 +89,11 @@ public class DataInputPanel extends JPanel {
             }
 
             // 운동
-            if (r.getWorkoutName() != null) {
+            if (r.getExerciseName() != null) {
                 tableModel.addRow(new Object[] {
                     "운동", 
                     tc.timeToStr(r.getDate()),
-                    r.getWorkoutName(), 
+                    r.getExerciseName(), 
                     "", 
                     ""
                 });

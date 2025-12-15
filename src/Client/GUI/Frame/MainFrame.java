@@ -4,7 +4,6 @@ import javax.swing.*;
 
 import Client.ClientSender;
 import Client.MessageRouter;
-import Client.GUI.Dialog.EntryDialog;
 import Client.GUI.Panel.AnalysisPanel;
 import Client.GUI.Panel.DataInputPanel;
 import Common.FeedbackResult;
@@ -34,10 +33,10 @@ public class MainFrame extends JFrame {
         mr.setFrame(this);
         // 메뉴바 구성
         createMenuBar();
-
         // 탭 구성
         initTabs();
-
+        // 화면의 정중앙으로 표시
+        setLocationRelativeTo(null);
         // 프레임 제목 설정
         setTitle("다이어트 메니저");
         // 닫기 버튼 클릭 시 프로그램 종료로 설정
@@ -46,25 +45,24 @@ public class MainFrame extends JFrame {
         setVisible(true);
         // 프레임 크기 설정
         setSize(600, 400);
-        // setLocationRelativeTo(null);
+        
     }
 
     /** 메뉴바 생성 메소드 */
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("메뉴");
-
-        JMenuItem itemEdit = new JMenuItem("회원 정보 수정");
+        // JMenuItem itemEdit = new JMenuItem("회원 정보 수정");
         JMenuItem itemLogout = new JMenuItem("로그아웃");
-        JMenuItem itemWithdraw = new JMenuItem("회원탈퇴");
+        // JMenuItem itemWithdraw = new JMenuItem("회원탈퇴");
 
-        // 회원 정보 수정 아이템 이벤트
+        /* // 회원 정보 수정 아이템 이벤트
         itemEdit.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "회원 정보 수정 클릭됨");
             // TODO: EditDialog 연결
             // TODO : DB에서 사용자 정보 수정
             // 구현 x
-        });
+        }); */
 
         // 로그아웃 아이템 이벤트
         itemLogout.addActionListener(e -> {
@@ -75,18 +73,11 @@ public class MainFrame extends JFrame {
 
             if (result == JOptionPane.YES_OPTION) {
                 // 로그아웃 요청
-                sender.sendMSG(MessageType.SIGNUP_REQ, userId);
-
-                JOptionPane.showMessageDialog(this, "로그아웃 완료");
-                dispose(); // 메인 프레임 닫기
-                // 로그아웃 -> 종료
-                // 다시 EntryDialog 열기
-                // EntryDialog entry = new EntryDialog(null, sender, mr);
-                // entry.setVisible(true);
+                sender.sendMSG(MessageType.LOGOUT_REQ, mb.logoutReq(userId));
             }
         });
 
-        // 회원탈퇴 아이템 이벤트
+       /*  // 회원탈퇴 아이템 이벤트
         itemWithdraw.addActionListener(e -> {
             int result = JOptionPane.showConfirmDialog(this,
                     "정말 회원탈퇴 하시겠습니까?",
@@ -103,19 +94,19 @@ public class MainFrame extends JFrame {
                 EntryDialog entry = new EntryDialog(null, sender, mr);
                 entry.setVisible(true);
             }
-        });
+        }); */
 
         // 메뉴 구성
-        menu.add(itemEdit);
-        menu.addSeparator();
+        // menu.add(itemEdit);
+        // menu.addSeparator();
         menu.add(itemLogout);
-        menu.add(itemWithdraw);
+        // menu.add(itemWithdraw);
 
         menuBar.add(menu);
         setJMenuBar(menuBar);
     }
 
-    /** 탭 구성 (분석 / 입력) */
+    // 탭 구성 (분석 / 입력)
     private void initTabs() {
         JTabbedPane tabs = new JTabbedPane();
         
@@ -139,75 +130,37 @@ public class MainFrame extends JFrame {
             }
         });
     }
-    
-    /* // 로그인
-    public void handleLoginRes(String id, String result) {
-        System.out.println(this.getName() + " 응답");
-        if (result.equals("OK")) {
-            JOptionPane.showMessageDialog(this, "로그인 성공!");
-            new MainFrame(id, sender, mr).setVisible(true);
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "로그인 실패");
-        }
-    }
-    // 회원가입
-    public void handleSignupRes(String id, String result) {
-        System.out.println(this.getName() + " 응답");
-        if (result.equals("OK")) {
-            JOptionPane.showMessageDialog(this, "회원가입 성공");
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "회원가입 실패");
-        }
-    }
-    // 식단
-    public void handleMealAddRes(String userId, String result) {
-        if (result.equals("OK")) {
-            JOptionPane.showMessageDialog(this, "식단 저장 완료");
-            sender.sendMSG(MessageType.RECORD_REQ, mb.recordReq(userId));
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "식단 저장 실패");
-        }
-    }
-    // 운동
-    public void handleWorkoutAddRes(String userId, String result) {
-        if (result.equals("OK")) {
-            JOptionPane.showMessageDialog(this, "운동 저장 완료");
-            sender.sendMSG(MessageType.RECORD_REQ, mb.recordReq(userId));
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "운동 저장 실패");
-        }
-    }
-    // 체중
-    public void handleWeightAddRes(String userId, String result) {
-        if (result.equals("OK")) {
-            JOptionPane.showMessageDialog(this, "체중 저장 완료");
-            sender.sendMSG(MessageType.RECORD_REQ, mb.recordReq(userId));
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "체중 저장 실패");
-        }
-    }
-    // 기록
-     public void handleRecordRes(String userId, ArrayList<RecordData> list) {
-        dataInputPanel.updateTable(list);
-    } */
 
-    // 진행률
+    // 로그아웃
+    public void handleLogoutRes(String userId, String result) {
+        if (result.equals("OK")) {
+            JOptionPane.showMessageDialog(this, "로그아웃 완료");
+            dispose();
+
+            // 종료
+            try {
+                System.exit(0);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        } 
+        else {
+            JOptionPane.showMessageDialog(this, "로그아웃 실패");
+        }
+    }
+
+    // 달성률
     public void handleProgressRes(String userId, Progress p) {
         analysisPanel.updateProgress(p);
     }
 
     // 피드백
     public void handleFeedbackRes(String userId, FeedbackResult fr) {
-        System.out.println("handleFeedbackRes");
         analysisPanel.updateFeedback(fr);
     }
 
-    // 진행률, 피드백 요청
+    // 달성률, 피드백 요청
     private void requestInitialAnalysisData() {
         new Thread(() -> {
             sender.sendMSG(MessageType.PROGRESS_REQ, mb.progressReq(userId));
@@ -217,6 +170,5 @@ public class MainFrame extends JFrame {
     
     public void onDataInputCompleted() {
         analysisLoaded = false; // 재요청 허용
-        // requestInitialAnalysisData();
     }
 }

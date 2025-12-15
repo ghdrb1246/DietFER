@@ -14,14 +14,13 @@ import java.util.ArrayList;
 */
 public class FeedbackService {
     private MealDAO mealDAO = new MealDAO();
-    private WorkoutDAO workoutDAO = new WorkoutDAO();
+    private ExerciseDAO exerciseDAO = new ExerciseDAO();
     private UserDAO userDAO = new UserDAO();
 
     public FeedbackResult getFeedback(String userId) {
         LocalDate today = LocalDate.now();
-        
         int intake = mealDAO.getDailyIntakeCal(userId, today);
-        int burn = workoutDAO.getDailyBurnCal(userId, today);
+        int burn = exerciseDAO.getDailyBurnCal(userId, today);
         int remain = intake - burn;
 
         User u = userDAO.findById(userId);
@@ -38,7 +37,7 @@ public class FeedbackService {
         int fatRec = (int) (recommendCal * 0.2 / 9);
 
         ArrayList<String> foodRec = recommendFood(carb, protein, fat, carbRec, proteinRec, fatRec);
-        ArrayList<String> workoutRec = recommendWorkout(remain, recommendCal);
+        ArrayList<String> exerciseRec = recommendExercise(remain, recommendCal);
 
         return new FeedbackResult(
                 intake, burn, remain, recommendCal,
@@ -46,7 +45,7 @@ public class FeedbackService {
                 protein, proteinRec,
                 fat, fatRec,
                 foodRec,
-                workoutRec);
+                exerciseRec);
     }
 
     private int calcRecommendCal(User u) {
@@ -70,7 +69,7 @@ public class FeedbackService {
         return list;
     }
 
-    private ArrayList<String> recommendWorkout(int remain, int recommend) {
+    private ArrayList<String> recommendExercise(int remain, int recommend) {
         ArrayList<String> list = new ArrayList<>();
         if (remain > recommend)
             list.add("유산소 운동 30분");

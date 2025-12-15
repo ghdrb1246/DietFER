@@ -15,7 +15,7 @@ public class MessageRouter implements IMessageCallback {
     private RegisterDialog registerDialog;
     private MainFrame mainFrame;
     private DietDialog dietDialog;
-    private WorkoutDialog workoutDialog;
+    private ExerciseDialog exerciseDialog;
     private WeightDialog weightDialog;
     private DataInputPanel dataInputPanel;
     private AnalysisPanel analysisPanel;
@@ -36,8 +36,8 @@ public class MessageRouter implements IMessageCallback {
         System.out.println("dietDialog set");
     }
     // 운동
-    public void setDialog(WorkoutDialog wod) {
-        this.workoutDialog = wod;
+    public void setDialog(ExerciseDialog wod) {
+        this.exerciseDialog = wod;
         System.out.println("dietDialog set");
     }
     // 체중
@@ -59,9 +59,7 @@ public class MessageRouter implements IMessageCallback {
     public void setFrame(MainFrame mf) {
         this.mainFrame = mf;
     }
-
-
-
+    
     // 로그인
     @Override
     public void onLoginRes(String id, String result) {
@@ -76,19 +74,14 @@ public class MessageRouter implements IMessageCallback {
         else System.out.println("registerDialog이 Null임");
     }
     
-
-    // 회원 정보 수정 결과 처리 후 보낸 OK, FAIL 결과를 표시
-    
-    // @Override
-    // public void onUserUpdateRes(String id, String result) {}
-
     // 로그아웃
     @Override
-    public void onLogoutRes(String result) { }
-
-    // 화원 탈퇴
-    // @Override
-    // public void onUserDeleteRes(String id, String result) {}
+    public void onLogoutRes(String id, String result) {
+        if (mainFrame != null)
+            mainFrame.handleLogoutRes(id, result);
+        else
+            System.out.println("mainFrame Null임");
+     }
 
     // 식단 입력
     @Override
@@ -101,11 +94,11 @@ public class MessageRouter implements IMessageCallback {
 
     // 운동 입력
     @Override
-    public void onWorkoutAddRes(String id, String result) {
-        if (workoutDialog != null)
-            workoutDialog.handleWorkoutAddRes(id, result);
+    public void onExerciseAddRes(String id, String result) {
+        if (exerciseDialog != null)
+            exerciseDialog.handleExerciseAddRes(id, result);
         else
-            System.out.println("workoutDialog Null임");
+            System.out.println("exerciseDialog Null임");
     }
 
     // 체중 입력
@@ -126,80 +119,7 @@ public class MessageRouter implements IMessageCallback {
             System.out.println("weightDialog Null임");
     }
 
-/*     // 진행률
-    @Override
-    public void onProgressRes(String id, Progress p) {
-        System.out.println("onProgressRes");
-        if (analysisPanel != null) {
-            System.out.println(p.getInitial());
-            analysisPanel.handleProgressRes(id, p);
-        }
-        else
-            System.out.println("analysisPanel Null임");
-    }
-
-    // 피드백
-    @Override
-    public void onFeedbackRes(String id, FeedbackResult fr) {
-        if (analysisPanel != null) {
-            analysisPanel.handleFeedbackRes(id, fr);
-            System.out.println("onFeedbackRes" + id);
-        }
-        else 
-            System.out.println("weightDialog Null임");
-    } */
-
-    // 메시지
-    // @Override
-    // public void onNormalMessageRes(String result) { }
-/* 
-    // 로그인
-    @Override
-    public void onLoginRes(String userId, String result) {
-        if (mainFrame != null)
-            mainFrame.handleLoginRes(userId, result);
-    }
-    
-    // 회원가입
-    @Override
-    public void onSignupRes(String userId, String result) {
-        if (mainFrame != null)
-            mainFrame.handleSignupRes(userId, result);
-    }
-
-    // 로그아웃 x
-    @Override
-    public void onLogoutRes(String result) { }
-
-    // 음식 
-    @Override
-    public void onMealAddRes(String userId, String result) {
-        if (mainFrame != null)
-            mainFrame.handleMealAddRes(userId, result);
-    }
-
-    // 운동
-    @Override
-    public void onWorkoutAddRes(String userId, String result) {
-        if (mainFrame != null)
-            mainFrame.handleWorkoutAddRes(userId, result);
-    }
-
-    // 체중
-    @Override
-    public void onWeightAddRes(String userId, String result) {
-        if (mainFrame != null)
-            mainFrame.handleWeightAddRes(userId, result);
-    }
-
-    // 기록
-    @Override
-    public void onRecordRes(String userId, ArrayList<RecordData> list) {
-        if (mainFrame != null)
-            mainFrame.handleRecordRes(userId, list);
-    }
- */
-    // 진행률
+    // 달성률
     @Override
     public void onProgressRes(String userId, Progress p) {
         if (mainFrame != null) mainFrame.handleProgressRes(userId, p);

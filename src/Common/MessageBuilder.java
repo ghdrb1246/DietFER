@@ -95,36 +95,35 @@ public class MessageBuilder {
     } */
 
     /**
-     * 회원 정보 수정 처리 결과
-     * 
-     * @param id     사용자 ID
-     * @param result 처리 결과
-     * @return USER_UPDATE_RES/사용자 ID/처리 결과(“OK” or “FAIL”)
-     */
-    /* public String userUpdateRes(String id, String result) {
-        return build(MessageType.USER_UPDATE_RES, id, result);
-    } */
-
-    /**
      * 로그아웃 요청
      * 
-     * @param userId 사용자 ID
+     * @param id 사용자 ID
      * @return LOGOUT_REQ/사용자 ID
      */
-    public String logoutReq(String userId) {
-        return build(MessageType.LOGOUT_REQ, userId);
+    public String logoutReq(String id) {
+        return build(MessageType.LOGOUT_REQ, id);
     }
 
+    /**
+     * 로그아웃 처리 결과
+     * 
+     * @param id 사용자 ID
+     * @param result 처리 결과
+     * @return LOGOUT_RES/사용자 ID/처리 결과(“OK” or “FAIL”)
+     */
+    public String logoutRes(String id, String result) {
+        return build(MessageType.LOGOUT_RES, id, result);
+    }
     /**
      * 식단 입력 추가 요청
      * 
      * @param m 음식
      * @return MEAL_ADD_REQ/사용자 ID/날짜+시간/음식 타입/음식명/섭취량/칼로리/탄수회물/단백질/지방
      */
-    public String mealAddReq(String userId, Meal m) {
+    public String mealAddReq(String id, Meal m) {
         return build(
             MessageType.MEAL_ADD_REQ, 
-            userId,
+            id,
             m.getDateTime().toString(),
             m.getFoodName(), 
             m.getFoodTypr(),
@@ -139,39 +138,39 @@ public class MessageBuilder {
     /**
      * 식단 입력 추가 처리 결과
      * 
-     * @param userId 사용자 ID
+     * @param id 사용자 ID
      * @param result 처리 결과
      * @return MEAL_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”)
      */
-    public String mealAddRes(String userId, String result) {
-        return build(MessageType.MEAL_ADD_RES, userId, result);
+    public String mealAddRes(String id, String result) {
+        return build(MessageType.MEAL_ADD_RES, id, result);
     }
 
     /**
      * 운동 입력 추가 요청
      * 
      * @param w 운동
-     * @return WORKOUT_ADD_REQ/사용자 ID/날짜+시간/운동명/운동 시간
+     * @return EXERCISE_ADD_REQ/사용자 ID/날짜+시간/운동명/운동 시간
      */
-    public String workoutAddReq(String userId, Workout wk) {
+    public String exerciseAddReq(String id, Exercise ex) {
         return build(
-            MessageType.WORKOUT_ADD_REQ, 
-            userId,
-            wk.getDateTime().toString(), 
-            wk.getExerciseName(), 
-            String.valueOf(wk.getMinutes())
+            MessageType.EXERCISE_ADD_REQ, 
+            id,
+            ex.getDateTime().toString(), 
+            ex.getExerciseName(), 
+            String.valueOf(ex.getMinutes())
         );
     }
 
     /**
      * 운동 입력 추가 처리 결과
      * 
-     * @param userId 사용자 ID
+     * @param id 사용자 ID
      * @param result 처리 결과
-     * @return WORKOUT_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”)
+     * @return EXERCISE_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”)
      */
-    public String workoutAddRes(String userId, String result) {
-        return build(MessageType.WORKOUT_ADD_RES, userId, result);
+    public String exerciseAddRes(String id, String result) {
+        return build(MessageType.EXERCISE_ADD_RES, id, result);
     }
 
     /**
@@ -180,47 +179,47 @@ public class MessageBuilder {
      * @param w 체중
      * @return WEIGHT_ADD_REQ/사용자 ID/날짜/체중
      */
-    public String weightAddReq(String userId, Weight w) {
+    public String weightAddReq(String id, Weight w) {
         TimeConversion tc = new TimeConversion();
-        return build(MessageType.WEIGHT_ADD_REQ, userId, tc.timeToStr(w.getDate()), String.valueOf(w.getWeight()));
+        return build(MessageType.WEIGHT_ADD_REQ, id, tc.timeToStr(w.getDate()), String.valueOf(w.getWeight()));
     }
 
     /**
      * 체중 입력 추가 처리 결과
      * 
-     * @param userId 사용자 ID
+     * @param id 사용자 ID
      * @param result 처리 결과
      * @return WEIGHT_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”)
      */
-    public String weightAddRes(String userId, String result) {
-        return build(MessageType.WEIGHT_ADD_RES, userId, result);
+    public String weightAddRes(String id, String result) {
+        return build(MessageType.WEIGHT_ADD_RES, id, result);
     }
 
     /**
      * 기록 조회 요청
      * 
-     * @param userId 사용자 ID
+     * @param id 사용자 ID
      * @return RECORD_REQ/사용자 ID
      */
-    public String recordReq(String userId) {
-        return build(MessageType.RECORD_REQ, userId);
+    public String recordReq(String id) {
+        return build(MessageType.RECORD_REQ, id);
     }
 
     /**
      * 기록 처리 결과
      * 
-     * @param userId 사용자 ID
+     * @param id 사용자 ID
      * @param result 처리 결과
      * @return RECORD_RES/사용자 ID/처리 결과(날짜1(식단명,운동명,체중)+…+날짜n(식단명,운동명,체중) or “FAIL”)
      */
-    public String recordRes(String userId, ArrayList<RecordData> result) {
+    public String recordRes(String id, ArrayList<RecordData> result) {
         if (result == null || result.isEmpty()) {
-            return MessageType.RECORD_RES + "/" + userId + "/FAIL";
+            return MessageType.RECORD_RES + "/" + id + "/FAIL";
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append(MessageType.RECORD_RES).append("/");
-        sb.append(userId).append("/");
+        sb.append(id).append("/");
 
         for (int i = 0; i < result.size(); i++) {
             RecordData r = result.get(i);
@@ -228,7 +227,7 @@ public class MessageBuilder {
             sb.append(r.date.toString()) // LocalDate → String
                     .append("(")
                     .append(r.mealName).append(",")
-                    .append(r.workoutName).append(",")
+                    .append(r.exerciseName).append(",")
                     .append(r.weight)
                     .append(")");
 
@@ -241,40 +240,40 @@ public class MessageBuilder {
     }
 
     /**
-     * 진행률 요청
+     * 달성률 요청
      * 
-     * @param userId 사용자 ID
+     * @param id 사용자 ID
      * @return PROGRESS_REQ/사용자 ID
      */
-    public String progressReq(String userId) {
-        return build(MessageType.PROGRESS_REQ, userId);
+    public String progressReq(String id) {
+        return build(MessageType.PROGRESS_REQ, id);
     }
 
     /**
-     * 진행률 처리 결과
+     * 달성률 처리 결과
      * 
-     * @param userId 사용자 ID
+     * @param id 사용자 ID
      * @param result 처리 결과
      * @return PROGRESS_RES/사용자 ID/처리 결과(초기 체중/목표 체중/현재 체중/달성률 or “FAIL”)
      */
-    public String progressRes(String userId, Progress p) {
-        return build(MessageType.PROGRESS_RES, userId, String.valueOf(p.getInitial()), String.valueOf(p.getGoal()), String.valueOf(p.getCurrent()), String.valueOf(p.getProgress()));
+    public String progressRes(String id, Progress p) {
+        return build(MessageType.PROGRESS_RES, id, String.valueOf(p.getInitial()), String.valueOf(p.getGoal()), String.valueOf(p.getCurrent()), String.valueOf(p.getProgress()));
     }
 
     /**
      * 피드백 요청
      * 
-     * @param userId 사용자 ID
+     * @param id 사용자 ID
      * @return FEEDBACK_REQ/사용자 ID
      */ 
-    public String feedbackReq(String userId) {
-        return build(MessageType.FEEDBACK_REQ, userId);
+    public String feedbackReq(String id) {
+        return build(MessageType.FEEDBACK_REQ, id);
     }
 
     /**
      * 피드백 처리 결과
      * 
-     * @param userId 사용자 ID
+     * @param id 사용자 ID
      * @param result 처리 결과
      * @return FEEDBACK_RES/
      *         사용자 ID/
@@ -287,14 +286,14 @@ public class MessageBuilder {
      *         운동 추천 리스트 or “FAIL”
      *         )
      */
-    public String feedbackRes(String userId, FeedbackResult result) {
+    public String feedbackRes(String id, FeedbackResult result) {
         if (!result.getSuccess()) {
-            return MessageType.FEEDBACK_RES + "/" + userId + "/FAIL";
+            return MessageType.FEEDBACK_RES + "/" + id + "/FAIL";
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append(MessageType.FEEDBACK_RES).append("/");
-        sb.append(userId).append("/");
+        sb.append(id).append("/");
 
         // 섭취+소모+잔여+권장
         sb.append(result.getIntake()).append("+")
@@ -323,29 +322,29 @@ public class MessageBuilder {
         sb.append("/");
 
         // 운동 추천
-        ArrayList<String> workout = result.getWorkoutRecommend();
-        for (int i = 0; i < workout.size(); i++) {
-            sb.append(workout.get(i));
-            if (i < workout.size() - 1) sb.append("+");
+        ArrayList<String> exercise = result.getExerciseRecommend();
+        for (int i = 0; i < exercise.size(); i++) {
+            sb.append(exercise.get(i));
+            if (i < exercise.size() - 1) sb.append("+");
         }
 
         return sb.toString();
     }
     
     // 음식 검색 요청
-    public String foodSearcReq(String userId, String foodSear) {
-        return build(MessageType.FOOD_SEARCH_REQ, userId, foodSear);
+    public String foodSearcReq(String id, String foodSear) {
+        return build(MessageType.FOOD_SEARCH_REQ, id, foodSear);
     }
 
     // 음식 검색 처리 결과
-    public String foodSearcRes(String userId, ArrayList<FoodNutrition> fnlList) {
+    public String foodSearcRes(String id, ArrayList<FoodNutrition> fnlList) {
         if (fnlList.size() < 0) {
-            return MessageType.FOOD_SEARCH_RES + "/" + userId + "/FAIL";
+            return MessageType.FOOD_SEARCH_RES + "/" + id + "/FAIL";
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append(MessageType.FOOD_SEARCH_RES).append("/");
-        sb.append(userId).append("/");
+        sb.append(id).append("/");
 
         for (int i = 0; i < fnlList.size(); i++) {
             // 리스트 i번째 FoodNutrition 객체

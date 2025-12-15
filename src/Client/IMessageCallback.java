@@ -38,28 +38,28 @@ public interface IMessageCallback {
     // public void onUserUpdateRes(String id, String result);
 
     // 로그아웃
-    public void onLogoutRes(String result);
+    public void onLogoutRes(String id, String result);
 
     // 식단 입력
-    public void onMealAddRes(String userId, String result);
+    public void onMealAddRes(String id, String result);
 
     // 운동 입력
-    public void onWorkoutAddRes(String userId, String result);
+    public void onExerciseAddRes(String id, String result);
 
     // 현재 체중 입력
-    public void onWeightAddRes(String userId, String result);
+    public void onWeightAddRes(String id, String result);
 
     // 기록
-    public void onRecordRes(String userId, ArrayList<RecordData> list);
+    public void onRecordRes(String id, ArrayList<RecordData> list);
 
-    // 진행률
-    public void onProgressRes(String userId, Progress p);
+    // 달성률
+    public void onProgressRes(String id, Progress p);
 
     // 피드백
-    public void onFeedbackRes(String userId, FeedbackResult fr);
+    public void onFeedbackRes(String id, FeedbackResult fr);
     
     // 음식 검색
-    public void onFoodSearchRes(String userId, ArrayList<FoodNutrition> fn);
+    public void onFoodSearchRes(String id, ArrayList<FoodNutrition> fn);
     
     // 메시지
     // public void onNormalMessageRes(String result);
@@ -67,15 +67,15 @@ public interface IMessageCallback {
     /**
      * 메시지 처리 에러 출력
      * 
-     * @param _msg 예러 출력 메시지
+     * @param msg 예러 출력 메시지
      * @param _e 예외
      */
-    public void onMessageError(String _msg, Exception _e);
+    public void onMessageError(String msg, Exception _e);
     
     /**
      * 메시지 처리 출력
      * 
-     * @param _msg 출력 메시지
+     * @param msg 출력 메시지
      */
-    public void onMessage(String _msg);
+    public void onMessage(String msg);
 }

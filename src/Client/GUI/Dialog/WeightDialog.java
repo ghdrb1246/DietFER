@@ -58,7 +58,7 @@ public class WeightDialog extends JDialog {
         btnSave.addActionListener(e -> {
             TimeConversion tc = new TimeConversion();
             LocalDateTime datetime = tc.inputToTimeString(txtDateTime.getText());
-            Double weight = Double.parseDouble(txtWeight.getText());
+            double weight = Double.parseDouble(txtWeight.getText());
 
             Weight w = new Weight(datetime, weight);
             System.out.println(w.getDate() + ", " + w.getWeight());

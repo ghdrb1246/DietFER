@@ -72,8 +72,11 @@ public class EntryDialog extends JDialog {
         });
 
         // 기본 설정 
+        // 프레임 크기 설정
         setSize(350, 180);
+        // 창 크기를 조절 빙지
         setResizable(false);
+        // 화면의 정중앙으로 표시
         setLocationRelativeTo(null);
     }
     

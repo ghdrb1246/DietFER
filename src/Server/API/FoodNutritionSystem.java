@@ -15,7 +15,7 @@ import Common.FoodNutrition;
 
 public class FoodNutritionSystem {
     // TODO : 인증키 확인
-    private static final String SERVICE_KEY = "인증키";
+    private static final String SERVICE_KEY = "3Qv2YGfcxrLyWAmXThvn5VH9u3jXTXOmkYhZO929mraVTTAa5OMp1qNx%2FYfeRv1XVOJfK1PyN%2BjZrO2lJaNpRA%3D%3D";
     private static final String API_URL = "https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02/getFoodNtrCpntDbInq02";
 
     /**

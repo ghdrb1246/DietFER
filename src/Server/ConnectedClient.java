@@ -13,7 +13,7 @@ import Server.DB.MealDAO;
 import Server.DB.RecordDAO;
 import Server.DB.UserDAO;
 import Server.DB.WeightDAO;
-import Server.DB.WorkoutDAO;
+import Server.DB.ExerciseDAO;
 import Server.Service.FeedbackService;
 import Server.Service.ProgressService;
 
@@ -41,12 +41,12 @@ class ConnectedClient extends Thread {
     /**
      * 연결된 클라이언트 생성자
      * 
-     * @param _s  소켓
-     * @param _cl 연결된 클라이언트 리스트
+     * @param s  소켓
+     * @param cl 연결된 클라이언트 리스트
      */
-    public ConnectedClient(Socket _s, ArrayList<ConnectedClient> _cl) {
-        this.socket = _s;
-        this.clients = _cl;
+    public ConnectedClient(Socket s, ArrayList<ConnectedClient> cl) {
+        this.socket = s;
+        this.clients = cl;
     }
 
     /**
@@ -99,9 +99,9 @@ class ConnectedClient extends Thread {
     /**
      * 접속 해제한 클라이언트 제거 메소드
      * 
-     * @param _s 제거할 클라이언트 소켓
+     * @param s 제거할 클라이언트 소켓
      */
-    private void remove(Socket _s) {
+    private void remove(Socket s) {
         // 리스트를 반본하며 동일한 소켓을 가진 클라이언트를 찾는다.
         // 이 리스트를 하나씩 꺼내서 검사하기 위해 iterator(반복자)를 생성
         // iterator는 리스트를 안전하게 반복하면서 요소를 삭제할 수 있게 해주는 도구이다
@@ -118,7 +118,7 @@ class ConnectedClient extends Thread {
             // 현재 client가 가진 소켓과 비교
             // 지금 검사 중인 client가 가진 소켓과 제거하고 싶은 소켓이 같은지 비교한다.
             // 같은 소켓 이면 true, 아니면 false를 대입한다.
-            boolean isRemove = (client.socket == _s);
+            boolean isRemove = (client.socket == s);
 
             // 이 클라이언트가 우리가 제거해야 할 대상이라면
             if (isRemove) {
@@ -140,59 +140,58 @@ class ConnectedClient extends Thread {
      * 클라이언트에서 받은 메시지 타입에 따라 처리 메소드
      * 
      * @param _type 처리할 메지시 타입
-     * @param _msg  처리할 메지시
+     * @param msg  처리할 메지시
      */
-    private void msgBasedService(MessageType _type, String _msg) {
+    private void msgBasedService(MessageType _type, String msg) {
         switch (_type) {
             case SIGNUP_REQ :
                 // 회원 가입 메시지 처리
-                processSignupReq(_msg);
+                processSignupReq(msg);
                 break;
 
             case LOGIN_REQ :
-                processLoginReq(_msg);
+                processLoginReq(msg);
                 break;
-/*             case USER_UPDATE_REQ :
-                // 회원 정보 수정 메시지 처리
-                System.out.println("보류");
-                break;
- */
+
             case LOGOUT_REQ :
                 // 로그아웃 메시지 처리
-                processLogoutReq(_msg);
+                System.out.println("LOGOUT_REQ");
+                processLogoutReq(msg);
                 break;
+
             case MEAL_ADD_REQ :
                 // 식단 추가 메시지 처리
-                processMealAddReq(_msg);
+                processMealAddReq(msg);
                 break;
-            case WORKOUT_ADD_REQ :
+
+            case EXERCISE_ADD_REQ :
                 // 운동 추가 메시지 처리
-                processWorkOutAddReq(_msg);
+                processExerciseAddReq(msg);
                 break;
 
             case WEIGHT_ADD_REQ :
                 // 체중 추가 메시지 처리
-                processWeightAddReq(_msg);
+                processWeightAddReq(msg);
                 break;
 
             case RECORD_REQ :
                 // 기록 조회 메시지 처리
-                processRecordReq(_msg);
+                processRecordReq(msg);
                 break;
 
             case PROGRESS_REQ :
-                // 진행률 메시지 처리
-                processProgressReq(_msg);
+                // 달성률 메시지 처리
+                processProgressReq(msg);
                 break;
 
             case FEEDBACK_REQ :
                 // 피드백 메시지 처리
-                processFeedbackReq(_msg);
+                processFeedbackReq(msg);
                 break;  
 
             case FOOD_SEARCH_REQ :
                 // 음식 검색 메시지 처리
-                processFoodSearchReq(_msg);
+                processFoodSearchReq(msg);
                 break;            
             default : failMessageOutput("처리할 수 없는 메시지 타입입니다."); break;
         }
@@ -228,11 +227,11 @@ class ConnectedClient extends Thread {
     /**
      * 사용자가 회원가입 데이터를 파일에서 중복 검사 후 저장 및 처리 결과 메시지 전송하는 메소드
      * 
-     * @param _msg 처리할 메지시
+     * @param msg 처리할 메지시
      */
-    private void processSignupReq(String _msg) {
+    private void processSignupReq(String msg) {
         // 메시지를 "/"토큰으로 분리 -> 리스트에 저장
-        ArrayList<String> userData = mp.messageTokens(_msg);
+        ArrayList<String> userData = mp.messageTokens(msg);
 
         // 리스트에서 회원 정보를 추가한다.        
         User u = new User(
@@ -261,20 +260,20 @@ class ConnectedClient extends Thread {
     /**
      * 로그인를 처리하는 메소드
      * 
-     * @param _msg 처리할 메지시
+     * @param msg 처리할 메지시
      */
-    private void processLoginReq(String _msg) {
+    private void processLoginReq(String msg) {
         // 파일에서 사용자 정보를 검사
         // id 추출
-        String id = mp.findID(_msg);
+        String id = mp.findID(msg);
         // pw 추출
-        String pw = mp.findPW(_msg);
+        String pw = mp.findPW(msg);
         
         //DB에서 ID, PW 검사
         User u = new UserDAO().login(id, pw);
         // 검사 여부에 따라 OK, FAIL를 클라이언트에게 전송
         String lmsg = mb.loginRes(id, (u != null) ? "OK" : "FAIL");
-        if (u != null) this.setID(mp.findID(_msg));
+        if (u != null) this.setID(mp.findID(msg));
         // 메지시 전송
         sendMSG(MessageType.LOGIN_RES, lmsg);
     }
@@ -282,36 +281,45 @@ class ConnectedClient extends Thread {
     /**
      * 로그아웃을 처리하는 메소드
      * 
-     * @param _msg 처리할 메지시
+     * @param msg 처리할 메지시
      */
-    private void processLogoutReq(String _msg) {
-        // TODO : 로그아웃을 하는 클라이언트 종료
-        String id = mp.findID(_msg);
-        System.out.println("id : " + id + "이/가 로그아웃 되었습니다.");
+    private void processLogoutReq(String msg) {
+        // id 추출
+        String id = mp.findID(msg);
+
+        boolean ok = true;
+        // 로그아웃 처리 결과 메시지 생성
+        String rmsg = mb.logoutRes(id, ok ? "OK" : "FAIL");
+        // 전송
+        sendMSG(MessageType.LOGOUT_RES, rmsg);
+
         try {
-            clients.remove(id);
-            socket.close();
+            System.out.println("id : " + id + "이/가 로그아웃 되었습니다.");
+            // socket.close();
+            // remove(socket); 
         } 
-        catch (Exception e) { }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * 음식을 처리하는 메소드
-     * @param _msg 처리할 메지시
+     * @param msg 처리할 메지시
      */
-    private void processMealAddReq(String _msg) {
-        String id = mp.findID(_msg);
+    private void processMealAddReq(String msg) {
+        String id = mp.findID(msg);
         
         TimeConversion tc = new TimeConversion();
-        LocalDateTime ldt = tc.strToTime(mp.getToken(_msg, 2));
+        LocalDateTime ldt = tc.strToTime(mp.getToken(msg, 2));
         
-        String foodType = mp.getToken(_msg,3);
-        String foodName = mp.getToken(_msg,4);
-        Double gram = Double.parseDouble(mp.getToken(_msg, 5));
-        Double kcal = Double.parseDouble(mp.getToken(_msg, 6));
-        Double carbohydrate = Double.parseDouble(mp.getToken(_msg, 7));
-        Double protein = Double.parseDouble(mp.getToken(_msg, 8));
-        Double fat = Double.parseDouble(mp.getToken(_msg, 9));
+        String foodType = mp.getToken(msg,3);
+        String foodName = mp.getToken(msg,4);
+        double gram = Double.parseDouble(mp.getToken(msg, 5));
+        double kcal = Double.parseDouble(mp.getToken(msg, 6));
+        double carbohydrate = Double.parseDouble(mp.getToken(msg, 7));
+        double protein = Double.parseDouble(mp.getToken(msg, 8));
+        double fat = Double.parseDouble(mp.getToken(msg, 9));
 
         Meal m = new Meal(ldt, foodType, foodName, gram, kcal, carbohydrate, protein, fat); 
         // DB에 음식 산입 결과 조회
@@ -324,55 +332,54 @@ class ConnectedClient extends Thread {
     /**
      * 운동을 처리하는 메소드
      * 
-     * @param _msg 처리할 메지시
-     * WORKOUT_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”) 메시지
+     * @param msg 처리할 메지시
+     * EXERCISE_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”) 메시지
      */
-    private void processWorkOutAddReq(String _msg) {
-        // ArrayList<String> tokens = mp.messageTokens(_msg);
+    private void processExerciseAddReq(String msg) {
         TimeConversion tc = new TimeConversion();
 
-        String id = mp.findID(_msg);
-        LocalDateTime datetime = tc.strToTime(mp.getToken(_msg, 2));
-        String workoutName = mp.getToken(_msg, 3);
-        Double minutes = Double.parseDouble(mp.getToken(_msg, 4));
+        String id = mp.findID(msg);
+        LocalDateTime datetime = tc.strToTime(mp.getToken(msg, 2));
+        String exerciseName = mp.getToken(msg, 3);
+        double minutes = Double.parseDouble(mp.getToken(msg, 4));
 
         // 사용자 체중 조회
-        Double userWeight = new WeightDAO().getLatestWeight(id);
+        double userWeight = new WeightDAO().getLatestWeight(id);
 
-        if (userWeight == null) {
+        if (userWeight == 0.0) {
             // 최초 체중이 없으면 사용자 startWeight 사용
             userWeight = new UserDAO().getStartAndGoalWeight(id)[0];
         }
 
         // Exercise 매핑
-        Exercise ex = new ExerciseCSVDAO().getExercise(workoutName);
+        Exercise ex = new ExerciseCSVDAO().getExercise(exerciseName);
 
         // kcal 계산
-        Double kcal = ex.calcKcal(userWeight, minutes);
+        double kcal = ex.calcKcal(userWeight, minutes);
         
-        // Workout 객체 생성
-        Workout w = new Workout(datetime, workoutName, minutes, kcal); // kcal은 서버에서 계산하면 넣기
+        // Exercise 객체 생성
+        Exercise w = new Exercise(datetime, exerciseName, minutes, kcal); // kcal은 서버에서 계산하면 넣기
 
         // DB에 운동 저장 
-        Boolean ok = new WorkoutDAO().insert(id, w);  // DB 처리 결과
+        Boolean ok = new ExerciseDAO().insert(id, w);  // DB 처리 결과
 
         // 응답 메시지 생성
-        String rmsg = mb.workoutAddRes(id, ok ? "OK" : "FAIL");
+        String rmsg = mb.exerciseAddRes(id, ok ? "OK" : "FAIL");
         System.out.println(w.toString());
         // 클라이언트로 전송
-        sendMSG(MessageType.WORKOUT_ADD_RES, rmsg);
+        sendMSG(MessageType.EXERCISE_ADD_RES, rmsg);
     }
 
     /**
      * 체중을 처리하는 메소드
      * 
-     * @param _msg 처리할 메지시
+     * @param msg 처리할 메지시
      * WEIGHT_ADD_RES/사용자 ID/처리 결과(“OK” or “FAIL”) 메시지
      */
-    private void processWeightAddReq(String _msg) {
-        String id = mp.findID(_msg);
-        LocalDateTime date = new TimeConversion().inputToTimeString(mp.getToken(_msg, 2));
-        double weight = Double.parseDouble(mp.getToken(_msg, 3));
+    private void processWeightAddReq(String msg) {
+        String id = mp.findID(msg);
+        LocalDateTime date = new TimeConversion().inputToTimeString(mp.getToken(msg, 2));
+        double weight = Double.parseDouble(mp.getToken(msg, 3));
         Weight w = new Weight(date, weight);
 
         // DB에 체중 저장
@@ -386,11 +393,11 @@ class ConnectedClient extends Thread {
     /**
      * 기록을 처리하는 메소드
      * 
-     * @param _msg 처리할 메지시
+     * @param msg 처리할 메지시
      * RECORD_RES/사용자 ID/처리 결과(날짜1(식단명,운동명,체중)+…+날짜n(식단명,운동명,체중) or “FAIL”) 메시지
      */
-    private void processRecordReq(String _msg) {
-        String id = mp.findID(_msg);
+    private void processRecordReq(String msg) {
+        String id = mp.findID(msg);
         ArrayList<RecordData> list = new RecordDAO().findRecordsByUser(id);
 
         if (list == null) {
@@ -412,22 +419,15 @@ class ConnectedClient extends Thread {
     }
 
     /**
-     * 진행률을 처리하는 메소드
+     * 달성률을 처리하는 메소드
      * 
-     * @param _msg 처리할 메지시
+     * @param msg 처리할 메지시
      * PROGRESS_RES/사용자 ID/처리 결과(초기 체중/목표 체중/현재 체중/달성률 or “FAIL”) 메시지
      */
-    private void processProgressReq(String _msg) {
-        String id = mp.findID(_msg);
+    private void processProgressReq(String msg) {
+        String id = mp.findID(msg);
         Progress p = new ProgressService().getProgress(id);
         boolean ok = (p != null);
-
-        // double initial = 80;
-        // double goal = 70;
-        // double current = 75;
-        // double progress = (initial - current) / (initial - goal) * 100.0;
-
-        // Progress p = new Progress(initial, goal, current, progress);
 
         if (!ok) {
             sendMSG(MessageType.PROGRESS_RES, id + "/FAIL");
@@ -442,11 +442,11 @@ class ConnectedClient extends Thread {
     /**
      * 피드백을 처리하는 메소드
      * 
-     * @param _msg 처리할 메지시
+     * @param msg 처리할 메지시
      * FEEDBACK_RES/사용자 ID/처리 결과(섭취+소모+잔여+권장/탄수화물_섭취량+탄수화물_권장량/단백질_섭취량+단백질_권장량/지방_섭취량+지방_권장량/음식 추천 리스트/운동 추천 리스트 or “FAIL”) 메시지
      */
-    private void processFeedbackReq(String _msg) {
-        String id = mp.findID(_msg);
+    private void processFeedbackReq(String msg) {
+        String id = mp.findID(msg);
 
         FeedbackResult fr = new FeedbackService().getFeedback(id);
         boolean ok = (fr != null);
@@ -455,31 +455,6 @@ class ConnectedClient extends Thread {
             sendMSG(MessageType.FEEDBACK_RES, id + "/FAIL");
             return;
         }
-/* 
-        // 예시 샘플
-        int intake = 1800;
-        int burn = 300;
-        int remain = intake - burn;
-        int recommendCal = 2000;
-
-        int carbIntake = 210, carbRec = 250;
-        int proIntake = 55, proRec = 60;
-        int fatIntake = 78, fatRec = 55;
-
-        ArrayList<String> foodRecommend = new ArrayList<>();
-        foodRecommend.add("닭가슴살");
-        foodRecommend.add("현미밥");
-
-        ArrayList<String> workoutRecommend = new ArrayList<>();
-        workoutRecommend.add("빠르게 걷기");
-        workoutRecommend.add("스쿼트");
-
-        FeedbackResult fr = new FeedbackResult(
-                intake, burn, remain, recommendCal,
-                carbIntake, carbRec,
-                proIntake, proRec,
-                fatIntake, fatRec,
-                foodRecommend, workoutRecommend); */
 
         String rmsg = mb.feedbackRes(id, fr);
         System.out.println(rmsg);
@@ -489,12 +464,12 @@ class ConnectedClient extends Thread {
     /**
      * 음식 검색을 처리하는 메소드
      * 
-     * @param _msg 처리할 메지시
-     * FOOD_SEARCH_RES/사용자 ID/처리 결과(음식명+칼로리+탄수화물+단백질+지방/…/음식명+칼로리+탄수화물+단백질+지방 or “FAIL”)
+     * @param msg 처리할 메지시
+     * FOODsEARCH_RES/사용자 ID/처리 결과(음식명+칼로리+탄수화물+단백질+지방/…/음식명+칼로리+탄수화물+단백질+지방 or “FAIL”)
      */
-    public void processFoodSearchReq(String _msg) {
-        String id = mp.findID(_msg);
-        String foodName = mp.getToken(_msg, 2);
+    public void processFoodSearchReq(String msg) {
+        String id = mp.findID(msg);
+        String foodName = mp.getToken(msg, 2);
         FoodNutritionSystem fns = new FoodNutritionSystem();
         // 식품 영양 정보 객체
         ArrayList<FoodNutrition> fnlist = fns.fetchFoodNutrition(foodName);
@@ -507,16 +482,16 @@ class ConnectedClient extends Thread {
      * 사용자 메시지를 전송 메소드
      * 
      * @param _mt 메시지 타입
-     * @param _msg 메시지
+     * @param msg 메시지
      */
-    public void sendMSG(MessageType _mt, String _msg) {
+    public void sendMSG(MessageType _mt, String msg) {
         // 메시지 타입과 메시지를 출력
-        normalMessageOutput("type : " + _mt.getType() + " | msg : " + _msg);
-        // System.out.println("type : " + _mt.getType() + " | msg : " + _msg);
+        normalMessageOutput("type : " + _mt.getType() + " | msg : " + msg);
+        // System.out.println("type : " + _mt.getType() + " | msg : " + msg);
 
         try {
             // 클라이언트에게 전송
-            dataOutStream.writeUTF(_msg);
+            dataOutStream.writeUTF(msg);
             // dataOutStream.flush();
         }
         // 전송 시 예외 처리
@@ -530,18 +505,18 @@ class ConnectedClient extends Thread {
     /**
      * 정상 메시지 출력 메소드
      * 
-     * @param _msg 정상 메시지
+     * @param msg 정상 메시지
      */
-    public void normalMessageOutput(String _msg) {
-        System.out.println("Server > " + _msg);
+    public void normalMessageOutput(String msg) {
+        System.out.println("Server > " + msg);
     }
 
     /**
      * 실패 메시지 출력 메소드
      * 
-     * @param _msg 실패 메시지
+     * @param msg 실패 메시지
      */
-    public void failMessageOutput(String _msg) {
-        System.out.println("Server > " + _msg);
+    public void failMessageOutput(String msg) {
+        System.out.println("Server > " + msg);
     }
 } 

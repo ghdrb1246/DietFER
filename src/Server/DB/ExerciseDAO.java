@@ -3,14 +3,13 @@ package Server.DB;
 import java.sql.*;
 import java.time.LocalDate;
 
-import Common.Workout;
+import Common.Exercise;
 
-public class WorkoutDAO {
-
-    public boolean insert(String userId, Workout w) {
+public class ExerciseDAO {
+    public boolean insert(String userId, Exercise w) {
         String sql = """
-            INSERT INTO workouts
-            (user_id, workout_time, exercise_name, minutes, kcal)
+            INSERT INTO exercises
+            (user_id, exercise_time, exercise_name, minutes, kcal)
             VALUES (?, ?, ?, ?, ?)
         """;
 
@@ -39,8 +38,8 @@ public class WorkoutDAO {
     public int getDailyBurnCal(String userId, LocalDate date) {
         String sql = """
             SELECT IFNULL(SUM(kcal),0) AS burn
-            FROM workouts
-            WHERE user_id = ? AND DATE(workout_time) = ?
+            FROM exercises
+            WHERE user_id = ? AND DATE(exercise_time) = ?
         """;
 
         try (Connection conn = DBC.connect();

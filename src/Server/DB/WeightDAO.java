@@ -29,9 +29,9 @@ public class WeightDAO {
             DBC.close();
         }
     }
-
+    
     // 최신 체중 조회
-    public Double getLatestWeight(String userId) {
+    public double getLatestWeight(String userId) {
         String sql = """
             SELECT weight
             FROM weights
@@ -57,6 +57,6 @@ public class WeightDAO {
         finally {
             DBC.close();
         }
-        return null;
+        return 0.0;
     }
 }

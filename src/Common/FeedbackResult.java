@@ -26,7 +26,7 @@ public class FeedbackResult {
     private int fatRecommend;       // 권장 지방 
 
     private ArrayList<String> foodRecommend;    // 음식 추천 리스트
-    private ArrayList<String> workoutRecommend; // 운동 추천 리스트
+    private ArrayList<String> exerciseRecommend; // 운동 추천 리스트
   
     // 피드백 생성자
     public FeedbackResult(
@@ -35,7 +35,7 @@ public class FeedbackResult {
         int proteinIntake, int proteinRecommend,
         int fatIntake, int fatRecommend,
         ArrayList<String> foodRecommend,
-        ArrayList<String> workoutRecommend) {
+        ArrayList<String> exerciseRecommend) {
 
         this.success = true;
         this.intake = intake;
@@ -49,7 +49,7 @@ public class FeedbackResult {
         this.fatIntake = fatIntake;
         this.fatRecommend = fatRecommend;
         this.foodRecommend = foodRecommend;
-        this.workoutRecommend = workoutRecommend;
+        this.exerciseRecommend = exerciseRecommend;
     }
 
     // FAIL 생성자
@@ -107,8 +107,8 @@ public class FeedbackResult {
         return foodRecommend;
     }
 
-    public ArrayList<String> getWorkoutRecommend() {
-        return workoutRecommend;
+    public ArrayList<String> getExerciseRecommend() {
+        return exerciseRecommend;
     }
     /* -------------------------------------------------- */
 
@@ -164,8 +164,8 @@ public class FeedbackResult {
         this.foodRecommend = foodRecommend;
     }
 
-    public void setWorkoutRecommend(ArrayList<String> workoutRecommend) {
-        this.workoutRecommend = workoutRecommend;
+    public void setExerciseRecommend(ArrayList<String> exerciseRecommend) {
+        this.exerciseRecommend = exerciseRecommend;
     }
     /* -------------------------------------------------- */
 
@@ -183,7 +183,7 @@ public class FeedbackResult {
             ", fatIntake = " + fatIntake +
             ", fatRecommend = " + fatRecommend +
             ", foodRecommend = " + foodRecommend.toString() +
-            ", workoutRecommend = " + workoutRecommend.toString() +
+            ", exerciseRecommend = " + exerciseRecommend.toString() +
             "]");
     }
 }

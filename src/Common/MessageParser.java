@@ -30,7 +30,7 @@ public class MessageParser {
         tag = st.nextToken();
         // 메시지로 대입
         mt = MessageType.valueOf(tag);
-
+        
         // 메시지 타입이 유효한지 검사
         for (MessageType m : MessageType.values()) {
             if (m == mt) {
@@ -168,10 +168,10 @@ public class MessageParser {
             StringTokenizer insideTokens = new StringTokenizer(inside, ",");
 
             String meal = insideTokens.nextToken();
-            String workout = insideTokens.nextToken();
+            String exercise = insideTokens.nextToken();
             Double weight = Double.parseDouble(insideTokens.nextToken());
 
-            list.add(new RecordData(date, meal, workout, weight));
+            list.add(new RecordData(date, meal, exercise, weight));
         }
 
         return list;
@@ -239,13 +239,13 @@ public class MessageParser {
         ArrayList<String> foodList = findTokenUserList(tokens.get(6));
 
         // 6. 운동 추천
-        ArrayList<String> workoutList = findTokenUserList(tokens.get(7));
+        ArrayList<String> exerciseList = findTokenUserList(tokens.get(7));
      
         return new FeedbackResult(
             intake, burn, remain, 
             recommendCal, carbIntake, carbRecommend, 
             proteinIntake, proteinRecommend, fatIntake, 
-            fatRecommend, foodList, workoutList
+            fatRecommend, foodList, exerciseList
         );
     }
 

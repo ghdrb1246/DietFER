@@ -10,7 +10,6 @@ import Common.Exercise;
 import Common.MessageBuilder;
 import Common.MessageType;
 import Common.TimeConversion;
-import Common.Workout;
 import Server.CSV.ExerciseCSVDAO;
 
 import java.awt.*;
@@ -19,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 // 운동 입력 Dialog
-public class WorkoutDialog extends JDialog {
+public class ExerciseDialog extends JDialog {
     private MainFrame mainFrame;
     private ClientSender sender;
     private MessageRouter mr;
@@ -29,7 +28,7 @@ public class WorkoutDialog extends JDialog {
     private JTextField txtHour;
     private MessageBuilder mb = new MessageBuilder();
 
-    public WorkoutDialog(String userId, Window owner, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
+    public ExerciseDialog(String userId, Window owner, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
         super(owner, "운동 입력", ModalityType.APPLICATION_MODAL);
         this.mainFrame = mainFrame;
         this.sender = sender;
@@ -107,11 +106,11 @@ public class WorkoutDialog extends JDialog {
             TimeConversion tc = new TimeConversion();
             LocalDateTime datetime = tc.inputToTimeString(txtDateTime.getText());
             String exercise = (String) cbExercise.getSelectedItem();
-            Double hours = Double.parseDouble(txtHour.getText());
-            // kcal 계산
-            Workout w = new Workout(datetime, exercise, hours, 0);
+            double hours = Double.parseDouble(txtHour.getText());
+            
+            Exercise w = new Exercise(datetime, exercise, hours, 0.0);
 
-            sender.sendMSG(MessageType.WORKOUT_ADD_REQ, mb.workoutAddReq(userId, w));
+            sender.sendMSG(MessageType.EXERCISE_ADD_REQ, mb.exerciseAddReq(userId, w));
             dispose();
         });
 
@@ -121,7 +120,7 @@ public class WorkoutDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    public void handleWorkoutAddRes(String userId, String result) {
+    public void handleExerciseAddRes(String userId, String result) {
         if (result.equals("OK")) {
             JOptionPane.showMessageDialog(this, "운동 저장 완료");
 

@@ -1,8 +1,4 @@
--- users          ─ 사용자 정보
--- workouts       ─ 운동 기록
--- weights        ─ 체중 기록
--- meals          ─ 식단 기록
-
+-- users 사용자 정보
 CREATE TABLE users (
     user_id        VARCHAR(50) PRIMARY KEY,
     password       VARCHAR(100) NOT NULL,
@@ -14,10 +10,11 @@ CREATE TABLE users (
     created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE workouts (
-    workout_id     INT AUTO_INCREMENT PRIMARY KEY,
+-- exercises 운동 기록
+CREATE TABLE exercises (
+    exercise_id     INT AUTO_INCREMENT PRIMARY KEY,
     user_id        VARCHAR(50) NOT NULL,
-    workout_time   TIMESTAMP NOT NULL,
+    exercise_time   TIMESTAMP NOT NULL,
     exercise_name  VARCHAR(100) NOT NULL,
     minutes        DOUBLE NOT NULL,
     kcal           DOUBLE NOT NULL,
@@ -25,6 +22,7 @@ CREATE TABLE workouts (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
+-- weights 체중 기록
 CREATE TABLE weights (
     weight_id   INT AUTO_INCREMENT PRIMARY KEY,
     user_id     VARCHAR(50) NOT NULL,
@@ -34,6 +32,7 @@ CREATE TABLE weights (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
+-- meals 식단 기록
 CREATE TABLE meals (
     meal_id        INT AUTO_INCREMENT PRIMARY KEY,
     user_id        VARCHAR(50) NOT NULL,
