@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import Common.Exercise;
 
 public class ExerciseDAO {
-    public boolean insert(String userId, Exercise w) {
+    public boolean insert(String id, Exercise w) {
         String sql = """
             INSERT INTO exercises
             (user_id, exercise_time, exercise_name, minutes, kcal)
@@ -16,7 +16,7 @@ public class ExerciseDAO {
         try (Connection conn = DBC.connect();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, userId);
+            ps.setString(1, id);
             ps.setTimestamp(2, Timestamp.valueOf(w.getDateTime()));
             ps.setString(3, w.getExerciseName());
             ps.setDouble(4, w.getMinutes());
@@ -35,7 +35,7 @@ public class ExerciseDAO {
     }
 
     // 일일 소모 칼로리 조회
-    public int getDailyBurnCal(String userId, LocalDate date) {
+    public int getDailyBurnCal(String id, LocalDate date) {
         String sql = """
             SELECT IFNULL(SUM(kcal),0) AS burn
             FROM exercises
@@ -45,7 +45,7 @@ public class ExerciseDAO {
         try (Connection conn = DBC.connect();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, userId);
+            ps.setString(1, id);
             ps.setDate(2, Date.valueOf(date));
 
             ResultSet rs = ps.executeQuery();

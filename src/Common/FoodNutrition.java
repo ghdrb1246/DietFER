@@ -7,8 +7,7 @@ public class FoodNutrition {
     private double protein; // AMT_NUM4
     private double fat; // AMT_NUM6
 
-    public FoodNutrition(String foodName, double kcal,
-            double carbohydrate, double protein, double fat) {
+    public FoodNutrition(String foodName, double kcal, double carbohydrate, double protein, double fat) {
         this.foodName = foodName;
         this.kcal = kcal;
         this.carbohydrate = carbohydrate;

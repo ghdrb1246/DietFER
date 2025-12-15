@@ -5,7 +5,6 @@ import javax.swing.*;
 import Client.ClientSender;
 import Client.MessageRouter;
 import Client.GUI.Frame.MainFrame;
-import Client.GUI.Panel.DataInputPanel;
 import Common.MessageBuilder;
 import Common.MessageType;
 import Common.TimeConversion;
@@ -20,17 +19,17 @@ public class WeightDialog extends JDialog {
     private MainFrame mainFrame;
     private ClientSender sender;
     private MessageRouter mr;
-    private String userId;
+    private String id;
     private JTextField txtDateTime;
     private JTextField txtWeight;
     private MessageBuilder mb = new MessageBuilder();
 
-    public WeightDialog(String userId, Window owner, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
+    public WeightDialog(String id, Window owner, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
         super(owner, "체중 입력", ModalityType.APPLICATION_MODAL);
         this.mainFrame = mainFrame;
         this.sender = sender;
         this.mr = mr;
-        this.userId = userId;
+        this.id = id;
         
         mr.setDialog(this);
 
@@ -63,7 +62,7 @@ public class WeightDialog extends JDialog {
             Weight w = new Weight(datetime, weight);
             System.out.println(w.getDate() + ", " + w.getWeight());
 
-            sender.sendMSG(MessageType.WEIGHT_ADD_REQ, mb.weightAddReq(userId, w));
+            sender.sendMSG(MessageType.WEIGHT_ADD_REQ, mb.weightAddReq(id, w));
             dispose();
         });
 
@@ -73,14 +72,14 @@ public class WeightDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    public void handleWeightAddRes(String userId, String result) {
+    public void handleWeightAddRes(String id, String result) {
         if (result.equals("OK")) {
             JOptionPane.showMessageDialog(this, "체중 저장 완료");
 
             // 입력 후 분석 패널 업데이트 재요청 허용
             mainFrame.onDataInputCompleted();
 
-            sender.sendMSG(MessageType.RECORD_REQ, mb.recordReq(userId));
+            sender.sendMSG(MessageType.RECORD_REQ, mb.recordReq(id));
             dispose();
         } 
         else {

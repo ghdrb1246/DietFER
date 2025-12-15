@@ -18,13 +18,13 @@ public class AnalysisPanel extends JPanel {
     private NutritionAnalysisPanel nutritionAnalysisPanel;
 
     private MainFrame mainFrame;
-    private String userId;
+    private String id;
     private ClientSender sender;
     private MessageRouter mr;
 
     // 패널들 초기화
-    public AnalysisPanel(String userId, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
-        this.userId = userId;
+    public AnalysisPanel(String id, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
+        this.id = id;
         this.mainFrame = mainFrame;
         this.sender = sender;
         this.mr = mr;
@@ -57,15 +57,15 @@ public class AnalysisPanel extends JPanel {
         add(bottomPanel, BorderLayout.CENTER);
     }
 
-    /* public void handleFeedbackRes(String userId, FeedbackResult fr) {
+    /* public void handleFeedbackRes(String id, FeedbackResult fr) {
         dailySummaryPanel.handleDailySummary(fr);
         recommendationPanel.handleRecommendation(fr);
-        nutritionAnalysisPanel.handleFeedback(userId, fr);
+        nutritionAnalysisPanel.handleFeedback(id, fr);
     }
     
-    public void handleProgressRes(String userId, Progress p) {
+    public void handleProgressRes(String id, Progress p) {
         System.out.println("handleProgressRes");
-        weightAchievementPanel.handleProgress(userId, p);
+        weightAchievementPanel.handleProgress(id, p);
     } */
 
     // 피드백 패널 업데이트
@@ -171,7 +171,7 @@ class WeightAchievementPanel extends JPanel {
         });
     }
 /* 
-    public void handleProgress(String userId, Progress p) {
+    public void handleProgress(String id, Progress p) {
         // 체중 달성률 UI 갱신
         update(p.getGoal(), p.getInitial(), p.getCurrent());
         

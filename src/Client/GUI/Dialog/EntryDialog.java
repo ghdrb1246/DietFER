@@ -4,15 +4,14 @@ import javax.swing.*;
 
 import Client.ClientSender;
 import Client.MessageRouter;
-// import Client.MessageRouter;
 import Client.GUI.Frame.MainFrame;
 import Common.MessageBuilder;
 import Common.MessageType;
 
 import java.awt.*;
 
+// 로그인 Dialog
 public class EntryDialog extends JDialog {
-
     private JTextField txtId;
     private JPasswordField txtPw;
     private MessageRouter mr = new MessageRouter();

@@ -5,7 +5,7 @@ import Common.Weight;
 
 public class WeightDAO {
     // 체중 저장
-    public boolean insert(String userId, Weight w) {
+    public boolean insert(String id, Weight w) {
         String sql = """
             INSERT INTO weights (user_id, record_time, weight)
             VALUES (?, ?, ?)
@@ -14,7 +14,7 @@ public class WeightDAO {
         try (Connection conn = DBC.connect();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, userId);
+            ps.setString(1, id);
             ps.setTimestamp(2, Timestamp.valueOf(w.getDate()));
             ps.setDouble(3, w.getWeight());
 
@@ -31,7 +31,7 @@ public class WeightDAO {
     }
     
     // 최신 체중 조회
-    public double getLatestWeight(String userId) {
+    public double getLatestWeight(String id) {
         String sql = """
             SELECT weight
             FROM weights
@@ -43,7 +43,7 @@ public class WeightDAO {
         try (Connection conn = DBC.connect();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, userId);
+            ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {

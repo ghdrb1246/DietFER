@@ -4,19 +4,20 @@ import Server.DB.UserDAO;
 import Server.DB.WeightDAO;
 import Common.Progress;
 
+// 달성률 계산
 public class ProgressService {
     private UserDAO userDAO = new UserDAO();
     private WeightDAO weightDAO = new WeightDAO();
 
-    public Progress getProgress(String userId) {
+    public Progress getProgress(String id) {
 
-        double[] w = userDAO.getStartAndGoalWeight(userId);
+        double[] w = userDAO.getStartAndGoalWeight(id);
         if (w == null) return null;
 
         double initial = w[0];
         double goal = w[1];
 
-        double current = weightDAO.getLatestWeight(userId);
+        double current = weightDAO.getLatestWeight(id);
         if (current <= 0.0) current = initial; // 체중 기록 없을 경우
 
         double progressRate = calculateProgress(initial, goal, current);

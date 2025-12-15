@@ -15,15 +15,10 @@ public class DBC {
     public static final String databaseUser = "root";
     // 계정 비밀번호
     // TODO : 저장 금지
+
     public static final String databasePassword = "본인 JDBC 비밀번호";
     // JDBC 서버와 연결된 필드
     public static Connection connection = null;
-    
-    // 테스트용 메인 메소드
-    public static void main(String[] args) {
-    	connect();
-    	close();
-    }
     
     //DB 연결 메소드
     public static Connection connect() {

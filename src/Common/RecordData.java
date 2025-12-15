@@ -6,10 +6,10 @@ import java.time.LocalTime;
 // 기록 객체
 // 날짜, 음식명, 운동명, 체중
 public class RecordData {
-    public LocalDateTime date;
-    public String mealName;
-    public String exerciseName;
-    public Double weight;
+    private LocalDateTime date;
+    private String mealName;
+    private String exerciseName;
+    private Double weight;
 
     public RecordData(LocalDateTime date, String meal, String exercise, Double weight) {
         this.date = date;

@@ -8,9 +8,9 @@ public class Exercise {
     // 운동 명
     private String exerciseName;
     // 운동 시간
-    private Double minutes;
+    private double minutes;
     // 소모 칼로리
-    private Double kcal;
+    private double kcal;
 
     // 기본 생성자
     public Exercise() {}
@@ -22,7 +22,7 @@ public class Exercise {
      * @param minutes 운동 시간
      * @param kcal 소모 칼로리
      */
-    public Exercise(LocalDateTime dateTime, String exerciseName, Double minutes, Double kcal) {
+    public Exercise(LocalDateTime dateTime, String exerciseName, double minutes, double kcal) {
         this.dateTime = dateTime;
         this.exerciseName = exerciseName;
         this.minutes = minutes;
@@ -30,7 +30,7 @@ public class Exercise {
     }
 
     // 파일 운동 데이터 용 생성자
-    public Exercise(String name, Double kcal) {
+    public Exercise(String name, double kcal) {
         this.exerciseName = name;
         this.kcal = kcal;
     }
@@ -42,7 +42,7 @@ public class Exercise {
      * @param minutes 운동 시간
      * @return 운동한 Kcal를 리턴
      */ 
-    public Double calcKcal(Double weight, Double minutes) {
+    public double calcKcal(double weight, double minutes) {
         return kcal * weight * (minutes / 60.0);
     }
 
@@ -65,14 +65,14 @@ public class Exercise {
      * 
      * @return 운동 시간 리턴
      */
-    public Double getMinutes() { return minutes; }
+    public double getMinutes() { return minutes; }
 
     /**
      * 소모 칼로리 getter 메소드
      * 
      * @return 소모 칼로리 리턴
      */
-    public Double getKcal() { return kcal; }
+    public double getKcal() { return kcal; }
 
     /**
      * 등록 날짜+시간 setter 메소드
@@ -93,14 +93,14 @@ public class Exercise {
      * 
      * @param minutes 수정할 운동 시간
      */
-    public void setMinutes(Double minutes) { this.minutes = minutes; }
+    public void setMinutes(double minutes) { this.minutes = minutes; }
 
     /**
      * 소모 칼로리 setter 메소드
      * 
      * @param kcal 수정할 소모 칼로리
      */
-    public void setKcal(Double kcal) { this.kcal = kcal; }
+    public void setKcal(double kcal) { this.kcal = kcal; }
 
     @Override
     public String toString() {

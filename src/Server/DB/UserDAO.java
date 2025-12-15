@@ -67,7 +67,7 @@ public class UserDAO {
     }
 
     // 시작/목표 체중 조회
-    public double[] getStartAndGoalWeight(String userId) {
+    public double[] getStartAndGoalWeight(String id) {
         String sql = """
             SELECT start_weight, goal_weight
             FROM users
@@ -77,7 +77,7 @@ public class UserDAO {
         try (Connection conn = DBC.connect();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, userId);
+            ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -98,7 +98,7 @@ public class UserDAO {
     }
 
     // 사용자 정보를 조회
-    public User findById(String userId) {
+    public User findById(String id) {
 
         String sql = """
             SELECT user_id, password, sex, height, age, start_weight, goal_weight
@@ -109,7 +109,7 @@ public class UserDAO {
         try (Connection conn = DBC.connect();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, userId);
+            ps.setString(1, id);
 
             ResultSet rs = ps.executeQuery();
 

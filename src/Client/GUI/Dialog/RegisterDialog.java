@@ -9,11 +9,16 @@ import Common.MessageType;
 import Common.User;
 import java.awt.*;
 
+//회원가입 Dialog
 public class RegisterDialog extends JDialog {
+    // 서버와 통신을 위힌 sender
     private ClientSender sender;
+    // 메시지를 생성
     private MessageBuilder mb = new MessageBuilder();
+    // 메시지에서 GUI 처리
     private MessageRouter mr;
 
+    // 초기화
     public RegisterDialog(Dialog owner, ClientSender sender, MessageRouter mr) {
         super(owner, "회원가입", true);
         this.sender = sender;

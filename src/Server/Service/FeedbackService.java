@@ -17,19 +17,19 @@ public class FeedbackService {
     private ExerciseDAO exerciseDAO = new ExerciseDAO();
     private UserDAO userDAO = new UserDAO();
 
-    public FeedbackResult getFeedback(String userId) {
+    public FeedbackResult getFeedback(String id) {
         LocalDate today = LocalDate.now();
-        int intake = mealDAO.getDailyIntakeCal(userId, today);
-        int burn = exerciseDAO.getDailyBurnCal(userId, today);
+        int intake = mealDAO.getDailyIntakeCal(id, today);
+        int burn = exerciseDAO.getDailyBurnCal(id, today);
         int remain = intake - burn;
 
-        User u = userDAO.findById(userId);
+        User u = userDAO.findById(id);
         if (u == null)
             return null;
 
         int recommendCal = calcRecommendCal(u);
 
-        int[] n = mealDAO.getDailyNutrition(userId, today);
+        int[] n = mealDAO.getDailyNutrition(id, today);
         int carb = n[0], protein = n[1], fat = n[2];
 
         int carbRec = (int) (recommendCal * 0.5 / 4);
@@ -57,8 +57,7 @@ public class FeedbackService {
         }
     }
 
-    private ArrayList<String> recommendFood(int carb, int protein, int fat,
-            int carbRec, int proteinRec, int fatRec) {
+    private ArrayList<String> recommendFood(int carb, int protein, int fat, int carbRec, int proteinRec, int fatRec) {
         ArrayList<String> list = new ArrayList<>();
         if (protein < proteinRec)
             list.add("단백질 보충 식품");

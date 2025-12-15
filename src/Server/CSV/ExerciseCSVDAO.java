@@ -32,10 +32,12 @@ public class ExerciseCSVDAO {
         return exerciseMap;
     }
 
+    // 운동 명
     public Exercise getExercise(String name) {
         return loadExercises().get(name);
     }
 
+    // 운동의 시간당 소모 칼로리
     public Set<String> getExerciseNames() {
         return loadExercises().keySet();
     }

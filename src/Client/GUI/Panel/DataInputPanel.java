@@ -19,12 +19,12 @@ public class DataInputPanel extends JPanel {
     private MainFrame mainFrame;
     private DefaultTableModel tableModel;
     private JTable table;
-    private String userId;
+    private String id;
     private ClientSender sender;
     private MessageRouter mr;
 
-    public DataInputPanel(String userId, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
-        this.userId = userId;
+    public DataInputPanel(String id, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
+        this.id = id;
         this.mainFrame = mainFrame;
         this.sender = sender;
         this.mr = mr;
@@ -55,15 +55,15 @@ public class DataInputPanel extends JPanel {
 
         // 버튼 클릭 이벤트 (다음 단계에서 Dialog 연결)
         btnDiet.addActionListener(e -> {
-            new DietDialog(userId, SwingUtilities.getWindowAncestor(this), mainFrame, sender, mr).setVisible(true);
+            new DietDialog(id, SwingUtilities.getWindowAncestor(this), mainFrame, sender, mr).setVisible(true);
         });
 
         btnExercise.addActionListener(e -> {
-            new ExerciseDialog(userId, SwingUtilities.getWindowAncestor(this), mainFrame, sender, mr).setVisible(true);
+            new ExerciseDialog(id, SwingUtilities.getWindowAncestor(this), mainFrame, sender, mr).setVisible(true);
         });
 
         btnWeight.addActionListener(e -> {
-            new WeightDialog(userId, SwingUtilities.getWindowAncestor(this), mainFrame, sender, mr).setVisible(true);
+            new WeightDialog(id, SwingUtilities.getWindowAncestor(this), mainFrame, sender, mr).setVisible(true);
         });
     }
 
@@ -71,7 +71,7 @@ public class DataInputPanel extends JPanel {
         tableModel.addRow(rowData);
     }
 
-    public void handleRecordRes(String userId, ArrayList<RecordData> list) {
+    public void handleRecordRes(String id, ArrayList<RecordData> list) {
         TimeConversion tc = new TimeConversion();
         // 기존 테이블 초기화
         tableModel.setRowCount(0);

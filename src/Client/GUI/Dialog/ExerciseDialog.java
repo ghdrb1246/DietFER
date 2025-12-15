@@ -5,35 +5,31 @@ import javax.swing.*;
 import Client.ClientSender;
 import Client.MessageRouter;
 import Client.GUI.Frame.MainFrame;
-import Client.GUI.Panel.DataInputPanel;
 import Common.Exercise;
 import Common.MessageBuilder;
 import Common.MessageType;
 import Common.TimeConversion;
-import Server.CSV.ExerciseCSVDAO;
-
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 
 // 운동 입력 Dialog
 public class ExerciseDialog extends JDialog {
     private MainFrame mainFrame;
     private ClientSender sender;
     private MessageRouter mr;
-    private String userId;
+    private String id;
     private JTextField txtDateTime;
     private JComboBox<String> cbExercise;
     private JTextField txtHour;
     private MessageBuilder mb = new MessageBuilder();
 
-    public ExerciseDialog(String userId, Window owner, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
+    public ExerciseDialog(String id, Window owner, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
         super(owner, "운동 입력", ModalityType.APPLICATION_MODAL);
         this.mainFrame = mainFrame;
         this.sender = sender;
         this.mr = mr;
-        this.userId = userId;
+        this.id = id;
 
         mr.setDialog(this);
 
@@ -110,7 +106,7 @@ public class ExerciseDialog extends JDialog {
             
             Exercise w = new Exercise(datetime, exercise, hours, 0.0);
 
-            sender.sendMSG(MessageType.EXERCISE_ADD_REQ, mb.exerciseAddReq(userId, w));
+            sender.sendMSG(MessageType.EXERCISE_ADD_REQ, mb.exerciseAddReq(id, w));
             dispose();
         });
 
@@ -120,14 +116,14 @@ public class ExerciseDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    public void handleExerciseAddRes(String userId, String result) {
+    public void handleExerciseAddRes(String id, String result) {
         if (result.equals("OK")) {
             JOptionPane.showMessageDialog(this, "운동 저장 완료");
 
             // 입력 후 분석 패널 업데이트 재요청 허용
             mainFrame.onDataInputCompleted();
 
-            sender.sendMSG(MessageType.RECORD_REQ, mb.recordReq(userId));
+            sender.sendMSG(MessageType.RECORD_REQ, mb.recordReq(id));
             dispose();
         } else {
             JOptionPane.showMessageDialog(this, "운동 저장 실패");

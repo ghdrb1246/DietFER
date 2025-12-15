@@ -1,5 +1,6 @@
 package Common;
 
+// 달성률
 public class Progress {
     // 초기 체중
     private double initial;

@@ -21,7 +21,7 @@ public class DietDialog extends JDialog {
     private MainFrame mainFrame;
     private ClientSender sender;
     private MessageRouter mr;
-    private String userId;
+    private String id;
     private JTextField txtDateTime;
     // private JComboBox<String> cbMealType;
     private JTextField txtFoodKeyword;
@@ -31,12 +31,12 @@ public class DietDialog extends JDialog {
     private JTextField txtGram;
     private MessageBuilder mb = new MessageBuilder();
 
-    public DietDialog(String userId, Window owner, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
+    public DietDialog(String id, Window owner, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
         super(owner, "식단 입력", ModalityType.APPLICATION_MODAL);
         this.mainFrame = mainFrame;
         this.sender = sender;
         this.mr = mr;
-        this.userId = userId;
+        this.id = id;
         
         mr.setDialog(this);
         
@@ -88,7 +88,7 @@ public class DietDialog extends JDialog {
                 return;
             }
             // FOOD_SEARCH_REQ/사용자 ID/음식 검색어
-            sender.sendMSG(MessageType.FOOD_SEARCH_REQ, mb.foodSearcReq(userId, keyword));
+            sender.sendMSG(MessageType.FOOD_SEARCH_REQ, mb.foodSearcReq(id, keyword));
         });
 
 
@@ -112,7 +112,7 @@ public class DietDialog extends JDialog {
 
             Meal m = new Meal(datetime, food.getFoodName(), txtFoodKeyword.getText().trim(), gram, food.getKcal(), food.getCarbohydrate(), food.getProtein(), food.getFat());
             System.out.println(m.toString());
-            sender.sendMSG(MessageType.MEAL_ADD_REQ, mb.mealAddReq(userId, m));
+            sender.sendMSG(MessageType.MEAL_ADD_REQ, mb.mealAddReq(id, m));
             dispose();
         });
 
@@ -124,13 +124,13 @@ public class DietDialog extends JDialog {
     }
 
     // 음식 저장 처리 결과
-    public void handleMealAddRes(String userId, String result) {
+    public void handleMealAddRes(String id, String result) {
         if (result.equals("OK")) {
             JOptionPane.showMessageDialog(this, "식단 저장 완료");
 
             // 입력 후 분석 패널 업데이트 재요청 허용
             mainFrame.onDataInputCompleted();
-            sender.sendMSG(MessageType.RECORD_REQ, mb.recordReq(userId));
+            sender.sendMSG(MessageType.RECORD_REQ, mb.recordReq(id));
             dispose();
         } 
         else {
@@ -139,7 +139,7 @@ public class DietDialog extends JDialog {
     }
 
     // 음식 종류 콤보박스 아이템 추가
-    public void handleFoodSearchRes(String userId, ArrayList<FoodNutrition> list) {
+    public void handleFoodSearchRes(String id, ArrayList<FoodNutrition> list) {
         SwingUtilities.invokeLater(() -> {
             if (cbFoodList.getItemCount() > 0) cbFoodList.removeAllItems();
 

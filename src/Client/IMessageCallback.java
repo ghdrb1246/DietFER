@@ -61,9 +61,6 @@ public interface IMessageCallback {
     // 음식 검색
     public void onFoodSearchRes(String id, ArrayList<FoodNutrition> fn);
     
-    // 메시지
-    // public void onNormalMessageRes(String result);
-
     /**
      * 메시지 처리 에러 출력
      * 

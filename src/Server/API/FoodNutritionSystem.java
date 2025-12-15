@@ -15,7 +15,7 @@ import Common.FoodNutrition;
 
 public class FoodNutritionSystem {
     // TODO : 인증키 확인
-    private static final String SERVICE_KEY = "3Qv2YGfcxrLyWAmXThvn5VH9u3jXTXOmkYhZO929mraVTTAa5OMp1qNx%2FYfeRv1XVOJfK1PyN%2BjZrO2lJaNpRA%3D%3D";
+    private static final String SERVICE_KEY = "인증키";
     private static final String API_URL = "https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02/getFoodNtrCpntDbInq02";
 
     /**
@@ -91,22 +91,6 @@ public class FoodNutritionSystem {
             return Double.parseDouble(obj.get(key).getAsString().replace(",", ""));
         } catch (Exception e) {
             return 0.0;
-        }
-    }
-
-    // 테스트 용
-    public static void main(String[] args) {
-        FoodNutritionSystem f = new FoodNutritionSystem();
-        ArrayList<FoodNutrition> fList = new ArrayList<>();
-        try {
-            fList = f.fetchFoodNutrition("고구마");
-            for (FoodNutrition fn : fList) {
-                System.out.println(fn.toString());
-            }
-        } 
-        catch (Exception e) {
-            System.out.println("API 조회 중 예의 발생");
-            e.printStackTrace();
         }
     }
 }

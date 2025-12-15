@@ -3,11 +3,10 @@ package Server.DB;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-
 import Common.RecordData;
 
 public class RecordDAO {
-    public ArrayList<RecordData> findRecordsByUser(String userId) {
+    public ArrayList<RecordData> findRecordsByUser(String id) {
         ArrayList<RecordData> list = new ArrayList<>();
         String sql = """
                     SELECT
@@ -46,7 +45,7 @@ public class RecordDAO {
 
             // user_id 바인딩을 3번만 수행
             for (int i = 1; i <= 3; i++) {
-                ps.setString(i, userId);
+                ps.setString(i, id);
             }
 
             ResultSet rs = ps.executeQuery();

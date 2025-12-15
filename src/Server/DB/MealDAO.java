@@ -7,7 +7,7 @@ import Common.Meal;
 
 public class MealDAO {
     // 음식 저장
-    public boolean insert(String userId, Meal m) {
+    public boolean insert(String id, Meal m) {
         String sql = """
             INSERT INTO meals
             (user_id, meal_time, food_name, food_type, gram,
@@ -18,7 +18,7 @@ public class MealDAO {
         try (Connection conn = DBC.connect();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, userId);
+            ps.setString(1, id);
             ps.setTimestamp(2, Timestamp.valueOf(m.getDateTime()));
             ps.setString(3, m.getFoodName());
             ps.setString(4, m.getFoodTypr());
@@ -41,7 +41,7 @@ public class MealDAO {
     }
 
     // 일일 섭취량 조회
-    public int getDailyIntakeCal(String userId, LocalDate date) {
+    public int getDailyIntakeCal(String id, LocalDate date) {
         String sql = """
             SELECT IFNULL(SUM(kcal),0) AS intake
             FROM meals
@@ -51,7 +51,7 @@ public class MealDAO {
         try (Connection conn = DBC.connect();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, userId);
+            ps.setString(1, id);
             ps.setDate(2, Date.valueOf(date));
 
             ResultSet rs = ps.executeQuery();
@@ -65,7 +65,7 @@ public class MealDAO {
         return 0;
     }
 
-    public int[] getDailyNutrition(String userId, LocalDate date) {
+    public int[] getDailyNutrition(String id, LocalDate date) {
         String sql = """
             SELECT
                 IFNULL(SUM(carbohydrate),0) AS carb,
@@ -78,7 +78,7 @@ public class MealDAO {
         try (Connection conn = DBC.connect();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, userId);
+            ps.setString(1, id);
             ps.setDate(2, Date.valueOf(date));
 
             ResultSet rs = ps.executeQuery();

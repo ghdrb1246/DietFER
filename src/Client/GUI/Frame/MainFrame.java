@@ -10,23 +10,21 @@ import Common.FeedbackResult;
 import Common.MessageBuilder;
 import Common.MessageType;
 import Common.Progress;
-
 import java.awt.*;
 
 public class MainFrame extends JFrame {
     private MessageBuilder mb = new MessageBuilder();
-
-    private String userId;
+    private String id;
     private AnalysisPanel analysisPanel; // 다이어트 분석 패널
     private DataInputPanel dataInputPanel; // 데이터 입력 패널
     private ClientSender sender = null;
     private MessageRouter mr;
     private boolean analysisLoaded = false;
 
-    public MainFrame(String userId, ClientSender sender, MessageRouter mr) {
+    public MainFrame(String id, ClientSender sender, MessageRouter mr) {
         super("다이어트 분석 시스템 - 메인");
         
-        this.userId = userId;
+        this.id = id;
         this.sender = sender;
         this.mr = mr;
             
@@ -73,7 +71,7 @@ public class MainFrame extends JFrame {
 
             if (result == JOptionPane.YES_OPTION) {
                 // 로그아웃 요청
-                sender.sendMSG(MessageType.LOGOUT_REQ, mb.logoutReq(userId));
+                sender.sendMSG(MessageType.LOGOUT_REQ, mb.logoutReq(id));
             }
         });
 
@@ -110,8 +108,8 @@ public class MainFrame extends JFrame {
     private void initTabs() {
         JTabbedPane tabs = new JTabbedPane();
         
-        analysisPanel = new AnalysisPanel(userId, this, sender, mr);
-        dataInputPanel = new DataInputPanel(userId, this, sender, mr);
+        analysisPanel = new AnalysisPanel(id, this, sender, mr);
+        dataInputPanel = new DataInputPanel(id, this, sender, mr);
 
         tabs.addTab("다이어트 분석", analysisPanel);
         tabs.addTab("데이터 입력", dataInputPanel);
@@ -132,7 +130,7 @@ public class MainFrame extends JFrame {
     }
 
     // 로그아웃
-    public void handleLogoutRes(String userId, String result) {
+    public void handleLogoutRes(String id, String result) {
         if (result.equals("OK")) {
             JOptionPane.showMessageDialog(this, "로그아웃 완료");
             dispose();
@@ -151,24 +149,25 @@ public class MainFrame extends JFrame {
     }
 
     // 달성률
-    public void handleProgressRes(String userId, Progress p) {
+    public void handleProgressRes(String id, Progress p) {
         analysisPanel.updateProgress(p);
     }
 
     // 피드백
-    public void handleFeedbackRes(String userId, FeedbackResult fr) {
+    public void handleFeedbackRes(String id, FeedbackResult fr) {
         analysisPanel.updateFeedback(fr);
     }
 
     // 달성률, 피드백 요청
     private void requestInitialAnalysisData() {
         new Thread(() -> {
-            sender.sendMSG(MessageType.PROGRESS_REQ, mb.progressReq(userId));
-            sender.sendMSG(MessageType.FEEDBACK_REQ, mb.feedbackReq(userId));
+            sender.sendMSG(MessageType.PROGRESS_REQ, mb.progressReq(id));
+            sender.sendMSG(MessageType.FEEDBACK_REQ, mb.feedbackReq(id));
         }).start();
     }
     
+    // 재요청 허용
     public void onDataInputCompleted() {
-        analysisLoaded = false; // 재요청 허용
+        analysisLoaded = false;
     }
 }

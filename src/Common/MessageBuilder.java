@@ -224,11 +224,11 @@ public class MessageBuilder {
         for (int i = 0; i < result.size(); i++) {
             RecordData r = result.get(i);
 
-            sb.append(r.date.toString()) // LocalDate → String
+            sb.append(r.getDate().toString()) // LocalDate → String
                     .append("(")
-                    .append(r.mealName).append(",")
-                    .append(r.exerciseName).append(",")
-                    .append(r.weight)
+                    .append(r.getMealName()).append(",")
+                    .append(r.getExerciseName()).append(",")
+                    .append(r.getWeight())
                     .append(")");
 
             if (i < result.size() - 1) {

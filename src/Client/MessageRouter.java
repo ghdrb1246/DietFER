@@ -121,38 +121,38 @@ public class MessageRouter implements IMessageCallback {
 
     // 달성률
     @Override
-    public void onProgressRes(String userId, Progress p) {
-        if (mainFrame != null) mainFrame.handleProgressRes(userId, p);
+    public void onProgressRes(String id, Progress p) {
+        if (mainFrame != null) mainFrame.handleProgressRes(id, p);
         else System.out.println("onProgressRes NULL임");
     }
 
     // 피드백
     @Override
-    public void onFeedbackRes(String userId, FeedbackResult fr) {
+    public void onFeedbackRes(String id, FeedbackResult fr) {
         if (mainFrame != null)
-            mainFrame.handleFeedbackRes(userId, fr);
+            mainFrame.handleFeedbackRes(id, fr);
     }
 
     // 음식 검색
     @Override
-    public void onFoodSearchRes(String userId, ArrayList<FoodNutrition> fn) {
-        if (dietDialog != null) dietDialog.handleFoodSearchRes(userId, fn);
+    public void onFoodSearchRes(String id, ArrayList<FoodNutrition> fn) {
+        if (dietDialog != null) dietDialog.handleFoodSearchRes(id, fn);
     }
 
     /**
      * 메시지 처리 에러 출력
      * 
-     * @param _msg 예러 출력 메시지
+     * @param msg 예러 출력 메시지
      * @param _e   예외
      */
-    public void onMessageError(String _msg, Exception _e) {
+    public void onMessageError(String msg, Exception _e) {
     }
 
     /**
      * 메시지 처리 출력
      * 
-     * @param _msg 출력 메시지
+     * @param msg 출력 메시지
      */
-    public void onMessage(String _msg) {
+    public void onMessage(String msg) {
     }
 }
