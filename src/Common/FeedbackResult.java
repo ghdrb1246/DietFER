@@ -2,8 +2,10 @@ package Common;
 
 import java.util.ArrayList;
 
+/**
+ * 피드백 객체
+ */
 public class FeedbackResult {
-
     // FAIL 여부
     private boolean success;
     

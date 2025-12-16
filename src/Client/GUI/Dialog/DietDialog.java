@@ -1,15 +1,15 @@
 package Client.GUI.Dialog;
 
-import javax.swing.*;
 
+import javax.swing.*;
 import Client.ClientSender;
 import Client.MessageRouter;
-import Client.GUI.Frame.MainFrame;
 import Common.FoodNutrition;
 import Common.Meal;
 import Common.MessageBuilder;
 import Common.MessageType;
 import Common.TimeConversion;
+import Client.GUI.Frame.MainFrame;
 
 import java.awt.*;
 import java.time.LocalDateTime;
@@ -18,19 +18,36 @@ import java.util.ArrayList;
 
 // 식단 입력 Dialog
 public class DietDialog extends JDialog {
+    // 메인 프레임
     private MainFrame mainFrame;
+    // 서버간 통신을 위한 필트
     private ClientSender sender;
+    // 클라이언트와 GUI의 제어
     private MessageRouter mr;
+    // 사용자 ID
     private String id;
+    // 날짜/시간
     private JTextField txtDateTime;
-    // private JComboBox<String> cbMealType;
+    // 음식 검색 키위드
     private JTextField txtFoodKeyword;
+    // 검색 버튼
     private JButton btnSearch;
+    // 음식 콤보박스
     private JComboBox<FoodNutrition> cbFoodList;
-    // private JComboBox<String> cbFoodList;
+    // 섭취양
     private JTextField txtGram;
+    // 메시지 생성
     private MessageBuilder mb = new MessageBuilder();
 
+    /**
+     * 음식 입력 초기화
+     * 
+     * @param id        사용자 ID
+     * @param owner     JDialog의 최상의인 Window
+     * @param mainFrame 메인 프래임
+     * @param sender    서버간 통신을 위한 sender
+     * @param mr        클라이언트와 GUI의 제어
+     */
     public DietDialog(String id, Window owner, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
         super(owner, "식단 입력", ModalityType.APPLICATION_MODAL);
         this.mainFrame = mainFrame;
@@ -81,6 +98,7 @@ public class DietDialog extends JDialog {
 
         add(btnPanel, BorderLayout.SOUTH);
         
+        // 음식 검색 이벤트
         btnSearch.addActionListener(e -> {
             String keyword = txtFoodKeyword.getText().trim();
             if (keyword.isEmpty()) {
@@ -123,7 +141,12 @@ public class DietDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    // 음식 저장 처리 결과
+    /**
+     * 음식 저장 처리 결과를 받아 헨들러
+     * 
+     * @param id 사용자 ID
+     * @param result 결과
+     */
     public void handleMealAddRes(String id, String result) {
         if (result.equals("OK")) {
             JOptionPane.showMessageDialog(this, "식단 저장 완료");
@@ -138,7 +161,12 @@ public class DietDialog extends JDialog {
         }
     }
 
-    // 음식 종류 콤보박스 아이템 추가
+    /**
+     * 음식 종류 콤보박스 아이템 추가
+     * 
+     * @param id 사용자 ID
+     * @param list 음식 리스트를 콤보박스에 표시
+     */
     public void handleFoodSearchRes(String id, ArrayList<FoodNutrition> list) {
         SwingUtilities.invokeLater(() -> {
             if (cbFoodList.getItemCount() > 0) cbFoodList.removeAllItems();

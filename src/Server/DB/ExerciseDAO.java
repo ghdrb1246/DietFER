@@ -5,7 +5,16 @@ import java.time.LocalDate;
 
 import Common.Exercise;
 
+/**
+ * 운동 DAO
+ */
 public class ExerciseDAO {
+    /**
+     * 운동 저장
+     * @param id 사용자 ID
+     * @param w  운동 객체
+     * @return 저장 여부를 리턴(성공 : 1, 실패 : 0)
+     */
     public boolean insert(String id, Exercise w) {
         String sql = """
             INSERT INTO exercises
@@ -13,8 +22,7 @@ public class ExerciseDAO {
             VALUES (?, ?, ?, ?, ?)
         """;
 
-        try (Connection conn = DBC.connect();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBC.connect(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, id);
             ps.setTimestamp(2, Timestamp.valueOf(w.getDateTime()));
@@ -34,7 +42,13 @@ public class ExerciseDAO {
         }
     }
 
-    // 일일 소모 칼로리 조회
+    /**
+     * 일일 소모 칼로리 조회
+     * 
+     * @param id   사용자 ID
+     * @param date 날짜
+     * @return 칼로리 조회 여부
+     */
     public int getDailyBurnCal(String id, LocalDate date) {
         String sql = """
             SELECT IFNULL(SUM(kcal),0) AS burn
@@ -50,10 +64,11 @@ public class ExerciseDAO {
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt("burn");
-
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) {
             e.printStackTrace();
-        } finally {
+        } 
+        finally {
             DBC.close();
         }
         return 0;

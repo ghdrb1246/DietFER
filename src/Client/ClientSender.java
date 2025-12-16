@@ -8,7 +8,6 @@ import Common.MessageType;
 // 이 클래스 구조는 아래 링크에서 참고함
 // https://azamman.tistory.com/200
 
-
 /**
  * 클라이언트기 서버로 메시지를 보내는 전송 클래스
  */

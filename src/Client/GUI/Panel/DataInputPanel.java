@@ -5,12 +5,12 @@ import javax.swing.table.DefaultTableModel;
 
 import Client.ClientSender;
 import Client.MessageRouter;
+import Common.RecordData;
+import Common.TimeConversion;
 import Client.GUI.Dialog.DietDialog;
 import Client.GUI.Dialog.ExerciseDialog;
 import Client.GUI.Dialog.WeightDialog;
 import Client.GUI.Frame.MainFrame;
-import Common.RecordData;
-import Common.TimeConversion;
 
 import java.awt.*;
 import java.util.ArrayList;

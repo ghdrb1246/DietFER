@@ -3,9 +3,18 @@ package Server.DB;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+
 import Common.RecordData;
 
+/**
+ * 기록 조회 DAO
+ */
 public class RecordDAO {
+    /**
+     * 음식, 운동 체중 기록 조회
+     * @param id 사용자 ID
+     * @return 조회 여부
+     */
     public ArrayList<RecordData> findRecordsByUser(String id) {
         ArrayList<RecordData> list = new ArrayList<>();
         String sql = """

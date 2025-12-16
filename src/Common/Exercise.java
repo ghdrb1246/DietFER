@@ -2,6 +2,9 @@ package Common;
 
 import java.time.LocalDateTime;
 
+/**
+ * 운동 객체
+ */
 public class Exercise {
     // 등록 날짜+시간
     private LocalDateTime dateTime;

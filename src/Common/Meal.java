@@ -2,7 +2,9 @@ package Common;
 
 import java.time.LocalDateTime;
 
-// 음식 객체
+/**
+ * 음식 객체
+ */
 public class Meal {
     // 등록 날짜+시간
     private LocalDateTime dateTime;

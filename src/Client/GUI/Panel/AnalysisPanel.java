@@ -4,25 +4,41 @@ import javax.swing.*;
 
 import Client.ClientSender;
 import Client.MessageRouter;
-import Client.GUI.Frame.MainFrame;
 import Common.FeedbackResult;
 import Common.Progress;
+import Client.GUI.Frame.MainFrame;
 
 import java.awt.*;
 
-// 다이어트 분석 패널 클래스
+/**
+ * 다이어트 분석 패널 클래스
+ */
 public class AnalysisPanel extends JPanel {
+    // 일일 요약 패널
     private DailySummaryPanel dailySummaryPanel;
+    // 체중 달성률 패널
     private WeightAchievementPanel weightAchievementPanel;
+    // 식단/운동 추천 패널
     private RecommendationPanel recommendationPanel;
+    // 영양 분석 패널
     private NutritionAnalysisPanel nutritionAnalysisPanel;
-
+    // 메인 프래임
     private MainFrame mainFrame;
+    // 사용자 ID
     private String id;
+    // 서버간 통신을 위한 필트
     private ClientSender sender;
+    // 클라이언트와 GUI의 제어
     private MessageRouter mr;
 
-    // 패널들 초기화
+    /**
+     * 패널들 초기화
+     * 
+     * @param id        사용자 ID
+     * @param mainFrame 메인 프래임
+     * @param sender    서버간 통신을 위한 sender
+     * @param mr        클라이언트와 GUI의 제어
+     */
     public AnalysisPanel(String id, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
         this.id = id;
         this.mainFrame = mainFrame;
@@ -57,18 +73,11 @@ public class AnalysisPanel extends JPanel {
         add(bottomPanel, BorderLayout.CENTER);
     }
 
-    /* public void handleFeedbackRes(String id, FeedbackResult fr) {
-        dailySummaryPanel.handleDailySummary(fr);
-        recommendationPanel.handleRecommendation(fr);
-        nutritionAnalysisPanel.handleFeedback(id, fr);
-    }
-    
-    public void handleProgressRes(String id, Progress p) {
-        System.out.println("handleProgressRes");
-        weightAchievementPanel.handleProgress(id, p);
-    } */
-
-    // 피드백 패널 업데이트
+    /**
+     * 피드백 패널 업데이트
+     * 
+     * @param fr 피드백 객체
+     */
     public void updateFeedback(FeedbackResult fr) {
         System.out.println("updateFeedback");
         dailySummaryPanel.update(fr);
@@ -76,17 +85,26 @@ public class AnalysisPanel extends JPanel {
         nutritionAnalysisPanel.update(fr);
     }
 
-    // 달성률 패널 업데이트
+    /**
+     * 달성률 패널 업데이트
+     * 
+     * @param p 달성률 객체
+     */
     public void updateProgress(Progress p) {
         weightAchievementPanel.update(p);
     }
 }
 
-// 일일 요약 패널
-// 표시 내용 -> 섭취 kcal, 잔여 kcal, 소모 kcal, 권장 kcal
+/**
+ * 일일 요약 패널
+ */
 class DailySummaryPanel extends JPanel {
+    // 섭취 kcal, 잔여 kcal, 소모 kcal, 권장 kcal
     private JLabel lblIntake, lblRemain, lblBurn, lblRecommended;
 
+    /**
+     * 일일 요약 패널 초기화
+     */
     public DailySummaryPanel() {
         setBorder(BorderFactory.createTitledBorder("일일 요약"));
         setLayout(new GridLayout(2, 2));
@@ -102,6 +120,11 @@ class DailySummaryPanel extends JPanel {
         add(lblRecommended);
     }
 
+    /**
+     * 일일 요약 업데이트
+     * 
+     * @param fr 피드백 객체
+     */
     public void update(FeedbackResult fr) {
         // Swing은 스레드에서만 UI 갱신해야 함
         SwingUtilities.invokeLater(() -> {
@@ -115,29 +138,20 @@ class DailySummaryPanel extends JPanel {
             lblRemain.setText("잔여: " + (recommended - intake + burn) + " kcal");
         });
     }
-    /* 
-    public void handleDailySummary(FeedbackResult fr) {
-        if (!fr.getSuccess()) {
-            lblIntake.setText("-");
-            lblBurn.setText("-");
-            lblRemain.setText("-");
-            lblRecommended.setText("-");
-            return;
-        }
-        // update(fr.getIntake(), fr.getBurn(), fr.getRecommendCal());
-        // lblIntake.setText("섭취 : " + fr.getIntake() + " kcal");
-        // lblBurn.setText("소모 : " + fr.getBurn() + " kcal");
-        // lblRemain.setText("잔여 : " + fr.getRemain() + " kcal");
-        // lblRecommended.setText("권장 : " + fr.getRecommendCal() + " kcal");
-    } */
 }
 
-// 체중 달성률 패널
-// ProgressBar (0~100%) 옆에는 초기, 목표, 중앙에는 현재 표시
+/**
+ * 체중 달성률 패널
+ */
 class WeightAchievementPanel extends JPanel {
+    // ProgressBar (0~100%) 옆에는 초기, 목표, 중앙에는 현재 표시
     private JProgressBar bar;
+    // 초기, 현재. 목표 표시
     private JLabel lblInfo;
 
+    /**
+     * 체중 달성률 패널 초기화
+     */
     public WeightAchievementPanel() {
         setBorder(BorderFactory.createTitledBorder("체중 달성률"));
         setLayout(new BorderLayout());
@@ -151,6 +165,11 @@ class WeightAchievementPanel extends JPanel {
         add(bar, BorderLayout.CENTER);
     }
 
+    /**
+     * 체중 달성률 업테이트
+     * 
+     * @param p 달성률 객체
+     */
     public void update(Progress p) {
         // Swing은 스레드에서만 UI 갱신해야 함
         SwingUtilities.invokeLater(() -> {
@@ -167,7 +186,7 @@ class WeightAchievementPanel extends JPanel {
             bar.setString((int) rate + "%");
 
             // 디버깅용
-            System.out.println("Progress UI updated: " + rate + "%");
+            // System.out.println("Progress UI updated: " + rate + "%");
         });
     }
 /* 
@@ -183,11 +202,16 @@ class WeightAchievementPanel extends JPanel {
     } */
 }
 
-// 식단/운동 추천 패널
-// 추천 텍스트 표시
+/**
+ * 식단/운동 추천 패널
+ */
 class RecommendationPanel extends JPanel {
+    // 추천 텍스트 표시
     private JTextArea txtArea;
 
+    /**
+     * 식단/운동 추천 패널 초기화
+     */
     public RecommendationPanel() {
         setBorder(BorderFactory.createTitledBorder("식단 / 운동 추천"));
         setLayout(new BorderLayout());
@@ -199,6 +223,11 @@ class RecommendationPanel extends JPanel {
         add(new JScrollPane(txtArea), BorderLayout.CENTER);
     }
 
+    /**
+     * 식단/운동 추천 업데이트
+     * 
+     * @param fr 피드백 객체
+     */
     public void update(FeedbackResult fr) {
         // Swing은 스레드에서만 UI 갱신해야 함
         SwingUtilities.invokeLater(() -> {
@@ -234,12 +263,20 @@ class RecommendationPanel extends JPanel {
 // <90%=부족
 // 90%~110%=양호
 // 110%=초과
-// 영양 분석 패널 (탄·단·지 게이지 + 피드백)
+/**
+ * 영양 분석 패널 (탄·단·지 게이지 + 피드백)
+ */
 class NutritionAnalysisPanel extends JPanel {
+    // 탄수화물, 단백질, 지방을 ProgressBar으로 표시
     private JProgressBar barCarbs, barProtein, barFat;
+    // 탄수화물, 단백질, 지방 Label
     private JLabel lblCarbsInfo, lblProteinInfo, lblFatInfo;
+    // 피드백 표시
     private JTextArea txtFeedback;
 
+    /**
+     * 영양 분석 패널 초시화
+     */
     public NutritionAnalysisPanel() {
         setBorder(BorderFactory.createTitledBorder("영양 분석"));
         setLayout(new GridLayout(4, 1));
@@ -279,6 +316,11 @@ class NutritionAnalysisPanel extends JPanel {
         add(new JScrollPane(txtFeedback));
     }
 
+    /**
+     * 영양 분석 업데이트
+     * 
+     * @param fr 피드백 객체
+     */
     public void update(FeedbackResult fr) {
         // Swing은 스레드에서만 UI 갱신해야 함
         SwingUtilities.invokeLater(() -> {
@@ -288,13 +330,14 @@ class NutritionAnalysisPanel extends JPanel {
             int pRec = fr.getProteinRecommend();
             int f = fr.getFatIntake();
             int fRec = fr.getFatRecommend();
-            
-            System.out.println("c : " + c + "cRec : " + cRec + "p : " + p + "pRec : " + pRec + "f : " + f + "fRec : " + fRec);
+
+            System.out.println("c : " + c + ", cRec : " + cRec + ", p : " + p + ", pRec : " + pRec + ", f : " + f + "fRec : " + fRec);
+            // (값 x 100) / 관장값
 
             // 게이지 반영 %
-            barCarbs.setValue((int) ((double) c / (cRec * 100)));
-            barProtein.setValue((int) ((double) p / (pRec * 100)));
-            barFat.setValue((int) ((double) f / (fRec * 100)));
+            barCarbs.setValue((int) ((c * 100) / cRec));
+            barProtein.setValue((int) ((p * 100) / pRec));
+            barFat.setValue((int) ((f * 100) / fRec));
 
             lblCarbsInfo.setText("탄수화물: " + c + " / " + cRec);
             lblProteinInfo.setText("단백질: " + p + " / " + pRec);

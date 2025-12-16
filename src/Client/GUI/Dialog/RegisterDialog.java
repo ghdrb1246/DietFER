@@ -7,9 +7,12 @@ import Client.MessageRouter;
 import Common.MessageBuilder;
 import Common.MessageType;
 import Common.User;
+
 import java.awt.*;
 
-//회원가입 Dialog
+/**
+ * 회원가입 Dialog
+ */
 public class RegisterDialog extends JDialog {
     // 서버와 통신을 위힌 sender
     private ClientSender sender;
@@ -18,7 +21,13 @@ public class RegisterDialog extends JDialog {
     // 메시지에서 GUI 처리
     private MessageRouter mr;
 
-    // 초기화
+    /**
+     * 회원가입 Dialog 초기화
+     * 
+     * @param owner
+     * @param sender
+     * @param mr
+     */
     public RegisterDialog(Dialog owner, ClientSender sender, MessageRouter mr) {
         super(owner, "회원가입", true);
         this.sender = sender;
@@ -167,6 +176,12 @@ public class RegisterDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
+    /**
+     * 회원가입 처리 헨들러
+     * 
+     * @param id     사용자 ID
+     * @param result 처리 결과
+     */
     public void handleSignupRes(String id, String result) {
         System.out.println(this.getName() + " 응답");
         if (result.equals("OK")) {

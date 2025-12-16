@@ -5,8 +5,17 @@ import java.time.LocalDate;
 
 import Common.Meal;
 
+/**
+ * 음식 DAO
+ */
 public class MealDAO {
-    // 음식 저장
+    /**
+     * 음식 저장
+     * 
+     * @param id 사용자 ID
+     * @param m 음식 객체
+     * @return 저장 여부
+     */
     public boolean insert(String id, Meal m) {
         String sql = """
             INSERT INTO meals
@@ -40,7 +49,13 @@ public class MealDAO {
         }
     }
 
-    // 일일 섭취량 조회
+    /**
+     * 일일 섭취량 조회
+     * 
+     * @param id    사용자 ID
+     * @param date  날짜
+     * @return      조회 여부
+     */
     public int getDailyIntakeCal(String id, LocalDate date) {
         String sql = """
             SELECT IFNULL(SUM(kcal),0) AS intake
@@ -57,14 +72,23 @@ public class MealDAO {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt("intake");
 
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) {
             e.printStackTrace();
-        } finally {
+        } 
+        finally {
             DBC.close();
         }
         return 0;
     }
 
+    /**
+     * 매일 필요한 영양소 섭취 조회
+     * 
+     * @param id    사용자 ID
+     * @param date  날짜
+     * @return      조회 여부
+     */
     public int[] getDailyNutrition(String id, LocalDate date) {
         String sql = """
             SELECT

@@ -1,16 +1,26 @@
 package Server.Service;
 
+import Common.Progress;
 import Server.DB.UserDAO;
 import Server.DB.WeightDAO;
-import Common.Progress;
 
-// 달성률 계산
+
+/**
+ * 달성률 계산
+ */
 public class ProgressService {
+    // 사용자 DAO
     private UserDAO userDAO = new UserDAO();
+    // 체중 DAO
     private WeightDAO weightDAO = new WeightDAO();
 
+    /**
+     * 달성률 조회
+     * 
+     * @param id 사용자 ID
+     * @return 달성률 객체 리턴
+     */
     public Progress getProgress(String id) {
-
         double[] w = userDAO.getStartAndGoalWeight(id);
         if (w == null) return null;
 
@@ -30,8 +40,15 @@ public class ProgressService {
         );
     }
 
+    /**
+     * 진행 상황 계산
+     * 
+     * @param start     기초 체중
+     * @param goal      목표 체중
+     * @param current   현재 체중
+     * @return          진행 상황 계산 리턴
+     */
     private double calculateProgress(double start, double goal, double current) {
-
         if (start == goal)
             return 100.0;
 

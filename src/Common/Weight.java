@@ -2,6 +2,9 @@ package Common;
 
 import java.time.LocalDateTime;
 
+/**
+ * 체중 객체
+ */
 public class Weight {
     // 등록 날짜
     private LocalDateTime date;

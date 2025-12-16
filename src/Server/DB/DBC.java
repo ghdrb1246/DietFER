@@ -5,7 +5,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-// JDBC 서버에 DB에 연결
+/**
+ * JDBC 서버에 DB에 연결
+ */
 public class DBC {
     // 라이브러리 가져오기
     public static final String databaseDriver = "com.mysql.cj.jdbc.Driver";
@@ -20,7 +22,11 @@ public class DBC {
     // JDBC 서버와 연결된 필드
     public static Connection connection = null;
     
-    //DB 연결 메소드
+    /**
+     * DB 연결 메소드
+     * 
+     * @return 연결된 connection
+     */
     public static Connection connect() {
     	try {
     		Class.forName(databaseDriver);
@@ -37,7 +43,9 @@ public class DBC {
     	return connection;
     }
    
-    // DB 연결 해제 메소드
+    /**
+     * DB 연결 해제 메소드
+     */
     public static void close() {
     	try {
     		if(connection != null) {

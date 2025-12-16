@@ -1,61 +1,113 @@
 package Client;
 
 import java.util.ArrayList;
-import Client.GUI.Dialog.*;
-import Client.GUI.Frame.MainFrame;
-import Client.GUI.Panel.AnalysisPanel;
-import Client.GUI.Panel.DataInputPanel;
+
 import Common.FeedbackResult;
 import Common.FoodNutrition;
 import Common.Progress;
 import Common.RecordData;
+import Client.GUI.Dialog.*;
+import Client.GUI.Frame.MainFrame;
+import Client.GUI.Panel.AnalysisPanel;
+import Client.GUI.Panel.DataInputPanel;
 
+/**
+ * 클라이언트와 GUI의 제어 클래스
+ */
 public class MessageRouter implements IMessageCallback {
+    // 로그인
     private EntryDialog entryDialog;
+    // 회원가입
     private RegisterDialog registerDialog;
+    // 메인 프래임
     private MainFrame mainFrame;
+    // 음식 
     private DietDialog dietDialog;
+    // 운동
     private ExerciseDialog exerciseDialog;
+    // 체중
     private WeightDialog weightDialog;
+    // 데이터 입력
     private DataInputPanel dataInputPanel;
+    // 다이어트 분석
     private AnalysisPanel analysisPanel;
 
-    // 로그인
+    /**
+     * 로그인 Dialog 설정
+     * 
+     * @param ed 로그인 Dialog
+     */
     public void setDialog(EntryDialog ed) {
         this.entryDialog = ed;
         System.out.println("entryDialog set");
     }
-    // 회원가입
+
+    /**
+     * 회원가입 Dialog 설정
+     * 
+     * @param rd 회원가입 Dialog
+     */
     public void setDialog(RegisterDialog rd) {
         this.registerDialog = rd;
         System.out.println("registerDialog set");
     }
-    // 음식
+
+    /**
+     * 음식 Dialog 설정
+     * 
+     * @param dd 음식 Dialog
+     */
     public void setDialog(DietDialog dd) {
         this.dietDialog = dd;
         System.out.println("dietDialog set");
     }
-    // 운동
+
+    /**
+     * 운동 Dialog 설정
+     * 
+     * @param wod 운동 Dialog
+     */
     public void setDialog(ExerciseDialog wod) {
         this.exerciseDialog = wod;
         System.out.println("dietDialog set");
     }
-    // 체중
+
+    /**
+     * 체중 Dialog 설정
+     * 
+     * @param wed 체중 Dialog
+     */
     public void setDialog(WeightDialog wed) {
         this.weightDialog = wed;
         System.out.println("weightDialog set");
     }
-    // 입력 데이터 테이블에 업데이트
+
+    /**
+     * 데이터 입력 패널 설정
+     * 
+     * @param dip 체중 Dialog
+     */
     public void setPanel(DataInputPanel dip) {
         this.dataInputPanel = dip;
         System.out.println("dataInputPanel set");
     }
-    // 다이어트 분석
+    
+    //
+    /**
+     * 다이어트 분석 패널 설정
+     * 
+     * @param ap 다이어트 분석 Panel
+     */
     public void setPanel(AnalysisPanel ap) {
         this.analysisPanel = ap;
         System.out.println("analysisPanel set");
     }
-    // 메인 프래임
+
+    /**
+     * 메인 프래임 설정
+     * 
+     * @param mf 메인 프래임 
+     */
     public void setFrame(MainFrame mf) {
         this.mainFrame = mf;
     }

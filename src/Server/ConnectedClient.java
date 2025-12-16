@@ -458,6 +458,7 @@ class ConnectedClient extends Thread {
 
         String rmsg = mb.feedbackRes(id, fr);
         System.out.println(rmsg);
+
         sendMSG(MessageType.FEEDBACK_RES, rmsg);
     }
 

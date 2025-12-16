@@ -4,23 +4,38 @@ import javax.swing.*;
 
 import Client.ClientSender;
 import Client.MessageRouter;
-import Client.GUI.Panel.AnalysisPanel;
-import Client.GUI.Panel.DataInputPanel;
 import Common.FeedbackResult;
 import Common.MessageBuilder;
 import Common.MessageType;
 import Common.Progress;
+import Client.GUI.Panel.AnalysisPanel;
+import Client.GUI.Panel.DataInputPanel;
+
 import java.awt.*;
 
 public class MainFrame extends JFrame {
+    // 메시지 생성
     private MessageBuilder mb = new MessageBuilder();
+    // 사용자 ID
     private String id;
-    private AnalysisPanel analysisPanel; // 다이어트 분석 패널
-    private DataInputPanel dataInputPanel; // 데이터 입력 패널
+    // 다이어트 분석 패널
+    private AnalysisPanel analysisPanel; 
+    // 데이터 입력 패널
+    private DataInputPanel dataInputPanel;
+    // 서버간 통신을 위한 필트
     private ClientSender sender = null;
+    // 클라이언트와 GUI의 제어
     private MessageRouter mr;
+    // 분석 로드 여부
     private boolean analysisLoaded = false;
-
+    
+    /**
+     * 메인 프래임
+     * 
+     * @param id     시용자 ID
+     * @param sender 서버간 통신을 위한 sender
+     * @param mr     클라이언트와 GUI의 제어
+     */
     public MainFrame(String id, ClientSender sender, MessageRouter mr) {
         super("다이어트 분석 시스템 - 메인");
         
@@ -46,7 +61,9 @@ public class MainFrame extends JFrame {
         
     }
 
-    /** 메뉴바 생성 메소드 */
+    /** 
+     * 메뉴바 생성 메소드 
+     * */
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("메뉴");
@@ -104,7 +121,9 @@ public class MainFrame extends JFrame {
         setJMenuBar(menuBar);
     }
 
-    // 탭 구성 (분석 / 입력)
+    /**
+     * 탭 구성 (분석 / 입력)
+     */
     private void initTabs() {
         JTabbedPane tabs = new JTabbedPane();
         
@@ -129,7 +148,12 @@ public class MainFrame extends JFrame {
         });
     }
 
-    // 로그아웃
+    /**
+     * 로그아웃 핸들러
+     * 
+     * @param id 사용자 ID
+     * @param result 처리 결과
+     */
     public void handleLogoutRes(String id, String result) {
         if (result.equals("OK")) {
             JOptionPane.showMessageDialog(this, "로그아웃 완료");
@@ -148,17 +172,29 @@ public class MainFrame extends JFrame {
         }
     }
 
-    // 달성률
+    /**
+     * 달성률 핸들러
+     * 
+     * @param id 사용자 ID
+     * @param p  달성률 객체
+     */
     public void handleProgressRes(String id, Progress p) {
         analysisPanel.updateProgress(p);
     }
 
-    // 피드백
+    /**
+     * 피드백 핸들러
+     * 
+     * @param id 사용자 ID
+     * @param fr 피드백 객체
+     */
     public void handleFeedbackRes(String id, FeedbackResult fr) {
         analysisPanel.updateFeedback(fr);
     }
 
-    // 달성률, 피드백 요청
+    /**
+     * 달성률, 피드백 요청
+     */
     private void requestInitialAnalysisData() {
         new Thread(() -> {
             sender.sendMSG(MessageType.PROGRESS_REQ, mb.progressReq(id));
@@ -166,7 +202,9 @@ public class MainFrame extends JFrame {
         }).start();
     }
     
-    // 재요청 허용
+    /**
+     * 중복 분석 로드 재요청 허용
+     */
     public void onDataInputCompleted() {
         analysisLoaded = false;
     }

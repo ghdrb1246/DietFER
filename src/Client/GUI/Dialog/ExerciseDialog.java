@@ -4,26 +4,47 @@ import javax.swing.*;
 
 import Client.ClientSender;
 import Client.MessageRouter;
-import Client.GUI.Frame.MainFrame;
 import Common.Exercise;
 import Common.MessageBuilder;
 import Common.MessageType;
 import Common.TimeConversion;
+import Client.GUI.Frame.MainFrame;
+
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-// 운동 입력 Dialog
+
+/**
+ * 운동 입력 Dialog
+ */
 public class ExerciseDialog extends JDialog {
+    // 메인 프레임
     private MainFrame mainFrame;
+    // 서버간 통신을 위한 필트
     private ClientSender sender;
+    // 클라이언트와 GUI의 제어
     private MessageRouter mr;
+    // 사용자 ID
     private String id;
+    // 운동한 날짜/시간
     private JTextField txtDateTime;
+    // 운동 콤보박스
     private JComboBox<String> cbExercise;
+    // 운동한 시간
     private JTextField txtHour;
+    // 메시지 생성
     private MessageBuilder mb = new MessageBuilder();
 
+    /**
+     * 운동 Dialog 초기화
+     * 
+     * @param id        사용자 ID
+     * @param owner     JDialog의 최상의인 Window
+     * @param mainFrame 메인 프래임
+     * @param sender    서버간 통신을 위한 sender
+     * @param mr        클라이언트와 GUI의 제어
+     */
     public ExerciseDialog(String id, Window owner, MainFrame mainFrame, ClientSender sender, MessageRouter mr) {
         super(owner, "운동 입력", ModalityType.APPLICATION_MODAL);
         this.mainFrame = mainFrame;
@@ -97,15 +118,19 @@ public class ExerciseDialog extends JDialog {
         btnPanel.add(btnSave);
         btnPanel.add(btnCancel);
         add(btnPanel, BorderLayout.SOUTH);
-
+        
+        // 저장 이벤트
         btnSave.addActionListener(e -> {
             TimeConversion tc = new TimeConversion();
             LocalDateTime datetime = tc.inputToTimeString(txtDateTime.getText());
             String exercise = (String) cbExercise.getSelectedItem();
             double hours = Double.parseDouble(txtHour.getText());
-            
             Exercise w = new Exercise(datetime, exercise, hours, 0.0);
-
+            
+            if (exercise == null || w == null) {
+                JOptionPane.showMessageDialog(this, "운동을 선택하세요.");
+                return;
+            }
             sender.sendMSG(MessageType.EXERCISE_ADD_REQ, mb.exerciseAddReq(id, w));
             dispose();
         });
@@ -116,6 +141,12 @@ public class ExerciseDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
+    /**
+     * 운동 처리 헨들러
+     * 
+     * @param id     사용자 ID
+     * @param result 처리 결과
+     */
     public void handleExerciseAddRes(String id, String result) {
         if (result.equals("OK")) {
             JOptionPane.showMessageDialog(this, "운동 저장 완료");

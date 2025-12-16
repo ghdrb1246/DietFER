@@ -13,6 +13,11 @@ import com.google.gson.JsonParser;
 
 import Common.FoodNutrition;
 
+
+
+/**
+ * API에서 식품명으로 영양정보 조회
+ */
 public class FoodNutritionSystem {
     // TODO : 인증키 확인
     private static final String SERVICE_KEY = "인증키";
@@ -20,6 +25,9 @@ public class FoodNutritionSystem {
 
     /**
      * 식품명으로 영양정보 조회
+     * 
+     * @param foodName 감색할 음식 명
+     * @return 음식 리스트
      */
     public ArrayList<FoodNutrition> fetchFoodNutrition(String foodName) {
         StringBuilder sb = new StringBuilder();
@@ -53,6 +61,9 @@ public class FoodNutritionSystem {
 
     /**
      * JSON 파싱
+     * 
+     * @param json API으로 가져온 JSON 분리
+     * @return 음식 리스트
      */
     private ArrayList<FoodNutrition> parseFoodNutrition(String json) {
         ArrayList<FoodNutrition> list = new ArrayList<>();
@@ -76,14 +87,26 @@ public class FoodNutritionSystem {
         return list;
     }
 
-    // 음식명 추출
+    /**
+     * 음식명 추출
+     * 
+     * @param obj JSON 타입
+     * @param key 가져올 키
+     * @return 음식명
+     */
     private String getString(JsonObject obj, String key) {
         return obj.has(key) && !obj.get(key).isJsonNull()
                 ? obj.get(key).getAsString()
                 : "";
     }
 
-    // 탄, 단, 지 추출
+    /**
+     * 탄, 단, 지 추출
+     * 
+     * @param obj JSON 타입
+     * @param key 가져올 키
+     * @return 탄, 단, 지
+     */
     private double getDouble(JsonObject obj, String key) {
         try {
             if (!obj.has(key) || obj.get(key).getAsString().isBlank())

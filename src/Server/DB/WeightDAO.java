@@ -1,10 +1,18 @@
 package Server.DB;
 
 import java.sql.*;
+
 import Common.Weight;
 
+// 체중 DAO
 public class WeightDAO {
-    // 체중 저장
+    /**
+     * 체중 저장
+     * 
+     * @param id 사용자 ID
+     * @param w 체중 객체
+     * @return 저장 여부
+     */
     public boolean insert(String id, Weight w) {
         String sql = """
             INSERT INTO weights (user_id, record_time, weight)
@@ -30,7 +38,12 @@ public class WeightDAO {
         }
     }
     
-    // 최신 체중 조회
+    /**
+     * 최신 체중 조회
+     * 
+     * @param id 사용자 ID
+     * @return 조회 여부
+     */
     public double getLatestWeight(String id) {
         String sql = """
             SELECT weight

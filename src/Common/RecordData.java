@@ -3,14 +3,24 @@ package Common;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-// 기록 객체
-// 날짜, 음식명, 운동명, 체중
+
+/**
+ * 기록 객체
+ * 날짜, 음식명, 운동명, 체중
+ */
 public class RecordData {
     private LocalDateTime date;
     private String mealName;
     private String exerciseName;
     private Double weight;
 
+    /**
+     * 
+     * @param date
+     * @param meal
+     * @param exercise
+     * @param weight
+     */
     public RecordData(LocalDateTime date, String meal, String exercise, Double weight) {
         this.date = date;
         this.mealName = meal;

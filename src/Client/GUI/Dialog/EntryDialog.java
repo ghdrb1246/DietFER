@@ -4,21 +4,36 @@ import javax.swing.*;
 
 import Client.ClientSender;
 import Client.MessageRouter;
-import Client.GUI.Frame.MainFrame;
 import Common.MessageBuilder;
 import Common.MessageType;
+import Client.GUI.Frame.MainFrame;
 
 import java.awt.*;
 
-// 로그인 Dialog
+/**
+ * 로그인 Dialog
+ */
 public class EntryDialog extends JDialog {
+    // id 입력
     private JTextField txtId;
+    // 비밀번호 입력
     private JPasswordField txtPw;
+    // 클라이언트와 GUI의 제어
     private MessageRouter mr = new MessageRouter();
+    // 서버간 통신을 위한 필트
     private ClientSender sender;
+    // 메시지 생성
     private MessageBuilder mb = new MessageBuilder();
+    // 회원가입 창
     private RegisterDialog register;
-
+    
+    /**
+     * 로그인 입력 초기화
+     * 
+     * @param owner  JDialog의 최상의인 Window
+     * @param sender 서버간 통신을 위한 sender
+     * @param mr     클라이언트와 GUI의 제어
+     */
     public EntryDialog(Frame owner, ClientSender sender, MessageRouter mr) {
         super(owner, "로그인", true);
         this.sender = sender;
@@ -79,6 +94,12 @@ public class EntryDialog extends JDialog {
         setLocationRelativeTo(null);
     }
     
+    /**
+     * 로그인 처리 헨들러
+     * 
+     * @param id 사용자 ID
+     * @param result 처리 결과
+     */
     public void handleLoginRes(String id, String result) {
         System.out.println(this.getName() + " 응답");
         if (result.equals("OK")) {
