@@ -10,18 +10,18 @@ import java.sql.SQLException;
  */
 public class DBC {
     // 라이브러리 가져오기
-    public static final String databaseDriver = "com.mysql.cj.jdbc.Driver";
+    private static final String databaseDriver = "com.mysql.cj.jdbc.Driver";
     // JDBC 서버 연결
-    public static final String databaseUrl = "jdbc:mysql://localhost:3306/UserData?serverTimezone=Asia/Seoul&characterEncoding=UTF8&useSSL=false";
+    private static final String databaseUrl = "jdbc:mysql://localhost:3306/UserData?serverTimezone=Asia/Seoul&characterEncoding=UTF8&useSSL=false";
     // 계정 이름
-    public static final String databaseUser = "root";
+    private static final String databaseUser = "root";
     // 계정 비밀번호
     // TODO : 저장 금지
 
-    public static final String databasePassword = "본인 JDBC 비밀번호";
+    private static final String databasePassword = "본인 JDBC 비밀번호";
     // JDBC 서버와 연결된 필드
-    public static Connection connection = null;
-    
+    private static Connection connection = null;
+
     /**
      * DB 연결 메소드
      * 
@@ -30,6 +30,7 @@ public class DBC {
     public static Connection connect() {
     	try {
     		Class.forName(databaseDriver);
+            // connection = DatabaseConfig
     		connection = DriverManager.getConnection(databaseUrl, databaseUser, databasePassword);
     		if (connection != null) System.out.println("DB 연결 성공");
     		else System.out.println("DB 연결 실패");
